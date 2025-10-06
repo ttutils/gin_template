@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func registerDiyRoutes(apiGroup *gin.RouterGroup) {
+func diyRoutes(apiGroup *gin.RouterGroup) {
 	apiGroup.GET("/ping", handler.Ping)
 	apiGroup.GET("/server_info", handler.ServerInfo)
 	apiGroup.GET("/is_demo", handler.GetDemo)
