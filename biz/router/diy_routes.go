@@ -6,12 +6,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func registerDiyRoutes(r *gin.Engine) {
-	diyGroup := r.Group("/api")
-	{
-		diyGroup.GET("/ping", handler.Ping)
-		diyGroup.GET("/server_info", handler.ServerInfo)
-		diyGroup.GET("/is_demo", handler.GetDemo)
-		diyGroup.GET("/metrics", handler.Metrics)
-	}
+func registerDiyRoutes(apiGroup *gin.RouterGroup) {
+	apiGroup.GET("/ping", handler.Ping)
+	apiGroup.GET("/server_info", handler.ServerInfo)
+	apiGroup.GET("/is_demo", handler.GetDemo)
+	apiGroup.GET("/metrics", handler.Metrics)
 }

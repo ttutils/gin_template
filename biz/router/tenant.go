@@ -6,11 +6,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func tenantRoutes(r *gin.Engine) {
-	tenantGroup := r.Group("/api")
+func tenantRoutes(r *gin.RouterGroup) {
+	tenantGroup := r.Group("/tenant")
 	{
-		tenantGroup.PUT("/tenant/add", hTenant.CreateTenant)
-		tenantGroup.DELETE("/tenant/delete/:id", hTenant.DeleteTenant)
-		tenantGroup.GET("/tenant/list", hTenant.TenantList)
+		tenantGroup.PUT("/add", hTenant.CreateTenant)
+		tenantGroup.DELETE("/delete/:id", hTenant.DeleteTenant)
+		tenantGroup.GET("/list", hTenant.TenantList)
 	}
 }

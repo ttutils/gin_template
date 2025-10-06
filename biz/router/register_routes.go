@@ -3,7 +3,8 @@ package router
 import "github.com/gin-gonic/gin"
 
 func RegisterRoutes(r *gin.Engine) {
-	registerDiyRoutes(r)
-	tenantRoutes(r)
-	userRoutes(r)
+	apiGroup := r.Group("/api")
+	registerDiyRoutes(apiGroup)
+	tenantRoutes(apiGroup)
+	userRoutes(apiGroup)
 }

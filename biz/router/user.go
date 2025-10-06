@@ -6,15 +6,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func userRoutes(r *gin.Engine) {
-	userGroup := r.Group("/api")
+func userRoutes(apiGroup *gin.RouterGroup) {
+	userGroup := apiGroup.Group("/user")
 	{
-		userGroup.PUT("/user/add", hUser.CreateUser)
-		userGroup.DELETE("/user/delete/:user_id", hUser.DeleteUser)
-		userGroup.POST("/user/update/:user_id", hUser.UpdateUser)
-		userGroup.POST("/user/change_passwd/:user_id", hUser.ChangePasswd)
-		userGroup.POST("/user/login", hUser.UserLogin)
-		userGroup.GET("/user/list", hUser.UserList)
-		userGroup.GET("/user/info/:user_id", hUser.UserInfo)
+		userGroup.PUT("/add", hUser.CreateUser)
+		userGroup.DELETE("/delete/:user_id", hUser.DeleteUser)
+		userGroup.POST("/update/:user_id", hUser.UpdateUser)
+		userGroup.POST("/change_passwd/:user_id", hUser.ChangePasswd)
+		userGroup.POST("/login", hUser.UserLogin)
+		userGroup.GET("/list", hUser.UserList)
+		userGroup.GET("/info/:user_id", hUser.UserInfo)
 	}
 }
