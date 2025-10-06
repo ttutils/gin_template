@@ -49,7 +49,8 @@ func main() {
 
 	docs.SwaggerInfo.Version = config.Cfg.Server.Version
 	docs.SwaggerInfo.Title = config.Cfg.Server.Name
-	docs.SwaggerInfo.Description = "confkeeper by [buyfakett](https://github.com/buyfakett)."
+	docs.SwaggerInfo.Description = fmt.Sprintf("%s by [%s](https://github.com/%s).",
+		config.Cfg.Server.Name, config.Cfg.Server.Author, config.Cfg.Server.Author)
 	docs.SwaggerInfo.BasePath = ""
 	docs.SwaggerInfo.Schemes = []string{"http", "https"}
 

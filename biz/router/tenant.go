@@ -7,7 +7,10 @@ import (
 )
 
 func tenantRoutes(r *gin.Engine) {
-	r.PUT("/api/tenant/add", hTenant.CreateTenant)
-	r.DELETE("/api/tenant/delete/:id", hTenant.DeleteTenant)
-	r.GET("/api/tenant/list", hTenant.TenantList)
+	tenantGroup := r.Group("/api")
+	{
+		tenantGroup.PUT("/tenant/add", hTenant.CreateTenant)
+		tenantGroup.DELETE("/tenant/delete/:id", hTenant.DeleteTenant)
+		tenantGroup.GET("/tenant/list", hTenant.TenantList)
+	}
 }

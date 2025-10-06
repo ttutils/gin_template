@@ -48,3 +48,18 @@ func Init() {
 	}
 
 }
+
+func ChackDb() error {
+	sqlDB, err := DB.DB()
+	if err != nil {
+		return err
+	}
+
+	// 调用 Ping 检查数据库连接是否正常
+	err = sqlDB.Ping()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

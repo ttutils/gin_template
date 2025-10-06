@@ -7,11 +7,11 @@ import (
 )
 
 func registerDiyRoutes(r *gin.Engine) {
-	DiyGroup := r.Group("/api")
+	diyGroup := r.Group("/api")
 	{
-		DiyGroup.POST("/ping", handler.Ping)
-		DiyGroup.GET("/server_info", handler.ServerInfo)
-		DiyGroup.GET("/is_demo", handler.GetDemo)
-		DiyGroup.GET("/metrics", handler.Metrics)
+		diyGroup.GET("/ping", handler.Ping)
+		diyGroup.GET("/server_info", handler.ServerInfo)
+		diyGroup.GET("/is_demo", handler.GetDemo)
+		diyGroup.GET("/metrics", handler.Metrics)
 	}
 }

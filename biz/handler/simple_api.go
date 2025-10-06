@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"gin_template/biz/dal"
 	"gin_template/utils/config"
 	"net/http"
 
@@ -15,8 +16,17 @@ import (
 // @Produce application/json
 // @Router /api/ping [get]
 func Ping(c *gin.Context) {
+	err := dal.ChackDb()
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 200,
+			"msg":  "数据库连接失败",
+		})
+		return
+	}
 	c.JSON(http.StatusOK, gin.H{
-		"msg": "pong",
+		"code": 200,
+		"msg":  "pong",
 	})
 }
 

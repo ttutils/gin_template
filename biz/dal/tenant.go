@@ -52,17 +52,3 @@ func GetTenantById(id uint) (*model.TenantInfo, error) {
 	}
 	return &tenant, nil
 }
-
-// GetTenantListByIDs 根据命名空间ID列表获取租户列表
-func GetTenantListByIDs(tenantIDs []string, pageSize, offset int) ([]*model.TenantInfo, int64, error) {
-	var tenants []*model.TenantInfo
-	query := DB.Model(&model.TenantInfo{}).Where("tenant_id IN (?)", tenantIDs)
-
-	var total int64
-	if err := query.Count(&total).Error; err != nil {
-		return nil, 0, err
-	}
-
-	err := query.Order("id").Limit(pageSize).Offset(offset).Find(&tenants).Error
-	return tenants, total, err
-}
