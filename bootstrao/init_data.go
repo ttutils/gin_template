@@ -20,8 +20,10 @@ func InitData(db *gorm.DB) error {
 	if count == 0 {
 		slog.Infof("%s 用户不存在，密码为:%s", config.Cfg.Admin.Username, config.Cfg.Admin.Password)
 		adminUser := &model.User{
+			ID:       1,
 			Username: config.Cfg.Admin.Username,
 			Password: utils.MD5(config.Cfg.Admin.Password),
+			Enable:   true,
 		}
 		if err := db.Create(adminUser).Error; err != nil {
 			return err
