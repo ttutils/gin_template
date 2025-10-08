@@ -23,7 +23,7 @@ type DeleteReq struct {
 // @Param user_id path string true "用户ID"
 // @Success 200 {object} response.CommonResp
 // @Security ApiKeyAuth
-// @router /api/user/delete/:user_id [DELETE]
+// @router /api/user/delete/{user_id} [DELETE]
 func DeleteUser(c *gin.Context) {
 	req := new(DeleteReq)
 	if err := c.ShouldBindUri(req); err != nil {

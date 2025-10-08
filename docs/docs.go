@@ -114,7 +114,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/tenant/delete/:id": {
+        "/api/tenant/delete/{id}": {
             "delete": {
                 "security": [
                     {
@@ -234,7 +234,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/user/change_passwd/:user_id": {
+        "/api/user/change_passwd/{user_id}": {
             "post": {
                 "security": [
                     {
@@ -280,7 +280,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/user/delete/:user_id": {
+        "/api/user/delete/{user_id}": {
             "delete": {
                 "security": [
                     {
@@ -317,7 +317,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/user/info/:user_id": {
+        "/api/user/info/{user_id}": {
             "get": {
                 "security": [
                     {
@@ -444,7 +444,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/user/update/:user_id": {
+        "/api/user/update/{user_id}": {
             "post": {
                 "security": [
                     {

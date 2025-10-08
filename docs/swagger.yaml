@@ -234,7 +234,7 @@ paths:
       summary: 创建命名空间
       tags:
       - 命名空间
-  /api/tenant/delete/:id:
+  /api/tenant/delete/{id}:
     delete:
       consumes:
       - application/json
@@ -309,7 +309,7 @@ paths:
       summary: 创建用户
       tags:
       - 用户
-  /api/user/change_passwd/:user_id:
+  /api/user/change_passwd/{user_id}:
     post:
       consumes:
       - application/json
@@ -338,7 +338,7 @@ paths:
       summary: 修改用户密码
       tags:
       - 用户
-  /api/user/delete/:user_id:
+  /api/user/delete/{user_id}:
     delete:
       consumes:
       - application/json
@@ -361,7 +361,7 @@ paths:
       summary: 删除用户
       tags:
       - 用户
-  /api/user/info/:user_id:
+  /api/user/info/{user_id}:
     get:
       consumes:
       - application/json
@@ -442,7 +442,7 @@ paths:
       summary: 用户登录
       tags:
       - 用户
-  /api/user/update/:user_id:
+  /api/user/update/{user_id}:
     post:
       consumes:
       - application/json

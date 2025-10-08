@@ -28,7 +28,7 @@ type ChangePasswdUriReq struct {
 // @Param req body ChangePasswdReq true "密码信息"
 // @Success 200 {object} response.CommonResp
 // @Security ApiKeyAuth
-// @router /api/user/change_passwd/:user_id [POST]
+// @router /api/user/change_passwd/{user_id} [POST]
 func ChangePasswd(c *gin.Context) {
 	req := new(ChangePasswdReq)
 	uriReq := new(ChangePasswdUriReq)

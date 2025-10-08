@@ -36,7 +36,7 @@ type InfoResp struct {
 // @Param user_id path string true "用户ID"
 // @Success 200 {object} InfoResp
 // @Security ApiKeyAuth
-// @router /api/user/info/:user_id [GET]
+// @router /api/user/info/{user_id} [GET]
 func UserInfo(c *gin.Context) {
 	req := new(InfoReq)
 	if err := c.ShouldBindUri(req); err != nil {

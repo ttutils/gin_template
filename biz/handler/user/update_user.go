@@ -29,7 +29,7 @@ type UpdateUriReq struct {
 // @Param req body UpdateReq true "更新信息"
 // @Success 200 {object} response.CommonResp
 // @Security ApiKeyAuth
-// @router /api/user/update/:user_id [POST]
+// @router /api/user/update/{user_id} [POST]
 func UpdateUser(c *gin.Context) {
 	req := new(UpdateReq)
 	uriReq := new(UpdateUriReq)
