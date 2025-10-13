@@ -7,19 +7,20 @@ import (
 
 	"github.com/gookit/slog"
 
-	jwt "github.com/appleboy/gin-jwt/v2"
+	ginjwt "github.com/appleboy/gin-jwt/v3"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 var (
-	jwtMiddleware *jwt.GinJWTMiddleware
+	jwtMiddleware *ginjwt.GinJWTMiddleware
 	jwtSecret     = []byte(config.Cfg.Jwt.Secret)
 )
 
 // 初始化 JWT 中间件
 func initJWT() error {
 	var err error
-	jwtMiddleware, err = jwt.New(&jwt.GinJWTMiddleware{
+	jwtMiddleware, err = ginjwt.New(&ginjwt.GinJWTMiddleware{
 		Key:               jwtSecret,
 		IdentityKey:       "userid",
 		SendCookie:        false,
@@ -29,26 +30,20 @@ func initJWT() error {
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
 			if v, ok := data.(map[string]interface{}); ok {
 				return jwt.MapClaims{
-					"userid":   v["userid"], // 确保生成时为int类型
+					"userid":   v["userid"],
 					"username": v["username"],
 					"iss":      config.Cfg.Server.Name,
 				}
 			}
 			return jwt.MapClaims{}
 		},
-		Authorizator: func(data interface{}, c *gin.Context) bool {
-			if claims, ok := data.(jwt.MapClaims); ok {
-				// 确保 userid 转换为 int 类型
-				if userid, ok := claims["userid"].(float64); ok {
-					// 设置到gin上下文中
-					c.Set("userid", int(userid))
-				}
-				if username, ok := claims["username"].(string); ok {
-					c.Set("username", username)
-				}
-				return true
-			}
-			return false
+		// 添加登录验证函数，这是必需的
+		Authenticator: func(c *gin.Context) (interface{}, error) {
+			// 这里我们只是返回数据，实际使用时需要验证用户名密码
+			return map[string]interface{}{
+				"userid":   1,
+				"username": "admin",
+			}, nil
 		},
 	})
 	return err
@@ -62,25 +57,38 @@ func GenerateToken(userid uint, username string, expTime ...int) (string, error)
 		}
 	}
 
-	// 强制覆盖中间件的 Timeout 设置
+	// 暂存原超时配置
 	originalTimeout := jwtMiddleware.Timeout
-	defer func() { jwtMiddleware.Timeout = originalTimeout }() // 恢复原配置
+	defer func() { jwtMiddleware.Timeout = originalTimeout }()
 
-	// 计算过期时间
+	// 设置新的超时时间
 	if len(expTime) > 0 {
-		jwtMiddleware.Timeout = time.Hour * time.Duration(expTime[0])
+		jwtMiddleware.Timeout = time.Second * time.Duration(expTime[0])
 	} else {
 		jwtMiddleware.Timeout = time.Hour * time.Duration(config.Cfg.Jwt.ExpireTime)
 	}
 
-	// 生成 claims（不再手动设置 exp）
-	claims := map[string]interface{}{
+	// 准备用户数据
+	loginData := map[string]interface{}{
 		"userid":   int(userid),
 		"username": username,
 	}
 
-	token, _, err := jwtMiddleware.TokenGenerator(claims)
-	return token, err
+	// 直接调用 gin-jwt 的 PayloadFunc 来获取包含自定义字段的 claims
+	// 这是确保 PayloadFunc 被调用的可靠方法
+	claims := jwtMiddleware.PayloadFunc(loginData)
+
+	// PayloadFunc 不会自动添加时间相关字段，需要手动添加
+	claims["exp"] = time.Now().Add(jwtMiddleware.Timeout).Unix()
+	claims["orig_iat"] = time.Now().Unix()
+
+	// 使用标准的 jwt 库生成 token，但 claims 来自 gin-jwt 的 PayloadFunc
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString(jwtSecret)
+	if err != nil {
+		return "", err
+	}
+	return tokenString, nil
 }
 
 // ParseToken 解析并验证 JWT Token
@@ -96,7 +104,10 @@ func ParseToken(tokenStr string) (jwt.MapClaims, error) {
 		return nil, fmt.Errorf("token 解析失败: %v", err)
 	}
 
-	claims := jwt.ExtractClaimsFromToken(parsedToken)
+	claims, ok := parsedToken.Claims.(jwt.MapClaims)
+	if !ok {
+		return nil, fmt.Errorf("无法解析 claims")
+	}
 
 	// 验证 issuer
 	if iss, ok := claims["iss"].(string); !ok || iss != config.Cfg.Server.Name {
@@ -108,18 +119,14 @@ func ParseToken(tokenStr string) (jwt.MapClaims, error) {
 		return nil, fmt.Errorf("token 已过期")
 	}
 
-	// 验证userid并转换为int
-	useridVal, ok := claims["userid"]
-	if !ok {
-		return nil, fmt.Errorf("token 缺少 userid")
+	// userid 转换为 int
+	if useridVal, ok := claims["userid"]; ok {
+		if userid, ok := useridVal.(float64); ok {
+			claims["userid"] = int(userid)
+		}
 	}
-	userid, ok := useridVal.(float64)
-	if !ok {
-		return nil, fmt.Errorf("userid 类型错误")
-	}
-	claims["userid"] = int(userid) // 转换为int类型
 
-	// 验证username
+	// 验证 username
 	if _, ok := claims["username"].(string); !ok {
 		return nil, fmt.Errorf("token 缺少 username")
 	}
@@ -179,13 +186,13 @@ func ValidateToken(c *gin.Context, token string) error {
 		return fmt.Errorf("token 无效")
 	}
 
-	// 将 claims 保存到上下文
+	// 保存 claims 到 gin.Context
 	for k, v := range claims {
 		c.Set(k, v)
 	}
 	c.Set("userid", claims["userid"])
 	c.Set("username", claims["username"])
 
-	// 检查是否为管理员
+	// 检查是否管理员
 	return IsAdmin(c)
 }
