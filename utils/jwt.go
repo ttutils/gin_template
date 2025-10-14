@@ -5,86 +5,47 @@ import (
 	"gin_template/utils/config"
 	"time"
 
-	"github.com/gookit/slog"
-
-	ginjwt "github.com/appleboy/gin-jwt/v3"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/gookit/slog"
 )
 
 var (
-	jwtMiddleware *ginjwt.GinJWTMiddleware
-	jwtSecret     = []byte(config.Cfg.Jwt.Secret)
+	// JWT 配置
+	jwtConfig = struct {
+		Secret        []byte
+		IdentityKey   string
+		TokenHeadName string
+		Issuer        string
+	}{
+		Secret:        []byte(config.Cfg.Jwt.Secret),
+		IdentityKey:   "userid",
+		TokenHeadName: "Bearer",
+	}
 )
-
-// 初始化 JWT 中间件
-func initJWT() error {
-	var err error
-	jwtMiddleware, err = ginjwt.New(&ginjwt.GinJWTMiddleware{
-		Key:               jwtSecret,
-		IdentityKey:       "userid",
-		SendCookie:        false,
-		SendAuthorization: false,
-		TokenLookup:       "header: Authorization",
-		TokenHeadName:     "Bearer",
-		PayloadFunc: func(data interface{}) jwt.MapClaims {
-			if v, ok := data.(map[string]interface{}); ok {
-				return jwt.MapClaims{
-					"userid":   v["userid"],
-					"username": v["username"],
-					"iss":      config.Cfg.Server.Name,
-				}
-			}
-			return jwt.MapClaims{}
-		},
-		// 添加登录验证函数，这是必需的
-		Authenticator: func(c *gin.Context) (interface{}, error) {
-			// 这里我们只是返回数据，实际使用时需要验证用户名密码
-			return map[string]interface{}{
-				"userid":   1,
-				"username": "admin",
-			}, nil
-		},
-	})
-	return err
-}
 
 // GenerateToken 生成 JWT Token
 func GenerateToken(userid uint, username string, expTime ...int) (string, error) {
-	if jwtMiddleware == nil {
-		if err := initJWT(); err != nil {
-			return "", err
-		}
-	}
-
-	// 暂存原超时配置
-	originalTimeout := jwtMiddleware.Timeout
-	defer func() { jwtMiddleware.Timeout = originalTimeout }()
-
-	// 设置新的超时时间
+	// 设置过期时间
+	var expireTime time.Duration
 	if len(expTime) > 0 {
-		jwtMiddleware.Timeout = time.Second * time.Duration(expTime[0])
+		expireTime = time.Second * time.Duration(expTime[0])
 	} else {
-		jwtMiddleware.Timeout = time.Hour * time.Duration(config.Cfg.Jwt.ExpireTime)
+		expireTime = time.Hour * time.Duration(config.Cfg.Jwt.ExpireTime)
 	}
 
-	// 准备用户数据
-	loginData := map[string]interface{}{
+	// 创建 claims
+	claims := jwt.MapClaims{
 		"userid":   int(userid),
 		"username": username,
+		"iss":      config.Cfg.Server.Name,
+		"exp":      time.Now().Add(expireTime).Unix(),
+		"orig_iat": time.Now().Unix(),
 	}
 
-	// 直接调用 gin-jwt 的 PayloadFunc 来获取包含自定义字段的 claims
-	// 这是确保 PayloadFunc 被调用的可靠方法
-	claims := jwtMiddleware.PayloadFunc(loginData)
-
-	// PayloadFunc 不会自动添加时间相关字段，需要手动添加
-	claims["exp"] = time.Now().Add(jwtMiddleware.Timeout).Unix()
-	claims["orig_iat"] = time.Now().Unix()
-
-	// 使用标准的 jwt 库生成 token，但 claims 来自 gin-jwt 的 PayloadFunc
+	// 生成 token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString(jwtSecret)
+	tokenString, err := token.SignedString(jwtConfig.Secret)
 	if err != nil {
 		return "", err
 	}
@@ -93,18 +54,23 @@ func GenerateToken(userid uint, username string, expTime ...int) (string, error)
 
 // ParseToken 解析并验证 JWT Token
 func ParseToken(tokenStr string) (jwt.MapClaims, error) {
-	if jwtMiddleware == nil {
-		if err := initJWT(); err != nil {
-			return nil, err
+	// 解析 token
+	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-	}
-
-	parsedToken, err := jwtMiddleware.ParseTokenString(tokenStr)
+		return jwtConfig.Secret, nil
+	})
 	if err != nil {
 		return nil, fmt.Errorf("token 解析失败: %v", err)
 	}
 
-	claims, ok := parsedToken.Claims.(jwt.MapClaims)
+	// 验证 token 是否有效
+	if !token.Valid {
+		return nil, fmt.Errorf("token 无效")
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
 		return nil, fmt.Errorf("无法解析 claims")
 	}
@@ -183,7 +149,7 @@ func ValidateToken(c *gin.Context, token string) error {
 	// 验证 token
 	claims, err := ParseToken(token)
 	if err != nil {
-		return fmt.Errorf("token 无效")
+		return fmt.Errorf("token 无效: %v", err)
 	}
 
 	// 保存 claims 到 gin.Context
