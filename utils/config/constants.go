@@ -5,10 +5,8 @@ func GetDefaultAuthConfig() AuthConfig {
 	return AuthConfig{
 		ExcludedPaths: []string{
 			"/api/user/login",
-			"/nacos/v1/auth/login",
 			"/api/ping",
 			"/api/metrics",
-			"/nacos/v1/cs/configs",
 			"/api/server_info",
 			"/api/is_demo",
 		},
