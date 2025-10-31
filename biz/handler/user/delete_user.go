@@ -11,7 +11,7 @@ import (
 )
 
 type DeleteReq struct {
-	UserId string `uri:"user_id" binding:"required"`
+	UserId string `uri:"user_id" binding:"required,min=1,max=255"`
 }
 
 // DeleteUser 删除用户

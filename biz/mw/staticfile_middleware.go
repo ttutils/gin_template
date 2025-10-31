@@ -4,13 +4,13 @@ import (
 	"errors"
 	"io"
 	"io/fs"
-	"log"
 	"mime"
 	"net/http"
 	"path/filepath"
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gookit/slog"
 )
 
 // StaticFileMiddleware 是一个 Gin 中间件，用于提供静态文件服务，
@@ -21,11 +21,7 @@ func StaticFileMiddleware(staticFS fs.FS) gin.HandlerFunc {
 		filePath := c.Request.URL.Path
 
 		// 定义要跳过的 API 路径前缀
-		skipPrefixes := []string{
-			"/api",
-			"/nacos/v1/auth/login",
-			"/nacos/v1/cs/configs",
-		}
+		skipPrefixes := []string{"/api"}
 
 		// 如果是 API 请求，则直接放行
 		for _, prefix := range skipPrefixes {
@@ -53,13 +49,13 @@ func StaticFileMiddleware(staticFS fs.FS) gin.HandlerFunc {
 
 		// 如果找不到，尝试返回 index.html（用于 SPA 前端路由）
 		if served := serveFileFromFS(c, staticFS, indexPath); served {
-			log.Printf("[STATIC] 文件 '%s' 不存在，fallback 到 index.html", fullPath)
+			slog.Debugf("[STATIC] 文件 '%s' 不存在，fallback 到 index.html", fullPath)
 			c.Abort()
 			return
 		}
 
 		// 如果都找不到，返回 404
-		log.Printf("[STATIC] 文件 '%s' 和 index.html 均不存在，返回 404", fullPath)
+		slog.Debugf("[STATIC] 文件 '%s' 和 index.html 均不存在，返回 404", fullPath)
 		c.String(http.StatusNotFound, "404 Not Found")
 		c.Abort()
 	}
@@ -71,19 +67,19 @@ func serveFileFromFS(c *gin.Context, filesystem fs.FS, path string) bool {
 	file, err := filesystem.Open(path)
 	if err != nil {
 		if !errorsIsNotFound(err) {
-			log.Printf("[STATIC] 打开文件 '%s' 失败: %v", path, err)
+			slog.Debugf("[STATIC] 打开文件 '%s' 失败: %v", path, err)
 		}
 		return false
 	}
 	defer func() {
 		if err := file.Close(); err != nil {
-			log.Printf("[STATIC] 关闭文件 '%s' 失败: %v", path, err)
+			slog.Debugf("[STATIC] 关闭文件 '%s' 失败: %v", path, err)
 		}
 	}()
 
 	data, err := io.ReadAll(file)
 	if err != nil {
-		log.Printf("[STATIC] 读取文件 '%s' 失败: %v", path, err)
+		slog.Debugf("[STATIC] 读取文件 '%s' 失败: %v", path, err)
 		return false
 	}
 

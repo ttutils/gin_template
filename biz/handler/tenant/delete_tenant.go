@@ -11,7 +11,7 @@ import (
 )
 
 type DeleteReq struct {
-	ID string `uri:"id" binding:"required"`
+	ID string `uri:"id" binding:"required,min=1,max=255"`
 }
 
 // DeleteTenant 删除命名空间
