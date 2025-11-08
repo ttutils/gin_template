@@ -2,7 +2,7 @@
 
 WORKDIR=$(pwd)
 
-SERVER_NAME=confkeeper
+SERVER_NAME=go_apiserver
 
 VERSION=$1
 

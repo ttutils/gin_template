@@ -69,6 +69,8 @@ func main() {
 		slog.Infof("服务启动成功，地址为 http://localhost:%d", config.Cfg.Server.Port)
 	}
 
+	r.NoRoute(func(c *gin.Context) { c.JSON(404, gin.H{"code": 404, "msg": "你访问的页面不存在"}) })
+
 	// 启动服务
 	port := fmt.Sprintf(":%d", config.Cfg.Server.Port)
 	if err := r.Run(port); err != nil {
