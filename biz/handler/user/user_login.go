@@ -12,7 +12,7 @@ import (
 type LoginReq struct {
 	Username   string `json:"username" binding:"required,min=1,max=255"`
 	Password   string `json:"password" binding:"required,min=1,max=255"`
-	RememberMe bool   `json:"remember_me"`
+	RememberMe bool   `json:"remember_me" binding:"omitempty"`
 }
 
 type LoginData struct {
