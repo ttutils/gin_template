@@ -41,8 +41,6 @@ func main() {
 	gin.ForceConsoleColor()
 	r := gin.Default()
 	r.Use(mw.StaticFileMiddleware(staticFS))
-	// 注册鉴权中间件
-	r.Use(mw.JWTAuthMiddleware(config.Cfg.Auth.ExcludedPaths))
 
 	// 注册路由
 	genrouter.RegisterRoutes(r)

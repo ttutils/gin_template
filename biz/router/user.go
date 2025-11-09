@@ -2,6 +2,7 @@ package router
 
 import (
 	hUser "gin_template/biz/handler/user"
+	"gin_template/biz/mw"
 
 	"github.com/gin-gonic/gin"
 )
@@ -9,12 +10,12 @@ import (
 func userRoutes(apiGroup *gin.RouterGroup) {
 	userGroup := apiGroup.Group("/user")
 	{
-		userGroup.PUT("/add", hUser.CreateUser)
-		userGroup.DELETE("/delete/:user_id", hUser.DeleteUser)
-		userGroup.POST("/update/:user_id", hUser.UpdateUser)
-		userGroup.POST("/change_passwd/:user_id", hUser.ChangePasswd)
+		userGroup.PUT("/add", mw.JWTAuthMiddleware(), hUser.CreateUser)
+		userGroup.DELETE("/delete/:user_id", mw.JWTAuthMiddleware(), hUser.DeleteUser)
+		userGroup.POST("/update/:user_id", mw.JWTAuthMiddleware(), hUser.UpdateUser)
+		userGroup.POST("/change_passwd/:user_id", mw.JWTAuthMiddleware(), hUser.ChangePasswd)
 		userGroup.POST("/login", hUser.UserLogin)
-		userGroup.GET("/list", hUser.UserList)
-		userGroup.GET("/info/:user_id", hUser.UserInfo)
+		userGroup.GET("/list", mw.JWTAuthMiddleware(), hUser.UserList)
+		userGroup.GET("/info/:user_id", mw.JWTAuthMiddleware(), hUser.UserInfo)
 	}
 }

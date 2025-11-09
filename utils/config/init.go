@@ -36,27 +36,16 @@ type JwtConfig struct {
 	ExpireTime int    `mapstructure:"expire_time"`
 }
 
-type AuthConfig struct {
-	ExcludedPaths []string `mapstructure:"excludedPaths"`
-}
-
 type AdminConfig struct {
 	Username string `mapstructure:"username"`
 	Password string `mapstructure:"password"`
 }
 
-type ConfkeeperConfig struct {
-	ConfigType []string `mapstructure:"config_type"`
-	ActionType []string `mapstructure:"action_type"`
-}
-
 type AppConfig struct {
-	Server     ServerConfig     `mapstructure:"server"`
-	Db         DbConfig         `mapstructure:"db"`
-	Jwt        JwtConfig        `mapstructure:"jwt"`
-	Auth       AuthConfig       `mapstructure:"auth"`
-	Admin      AdminConfig      `mapstructure:"admin"`
-	Confkeeper ConfkeeperConfig `mapstructure:"confkeeper"`
+	Server ServerConfig `mapstructure:"server"`
+	Db     DbConfig     `mapstructure:"db"`
+	Jwt    JwtConfig    `mapstructure:"jwt"`
+	Admin  AdminConfig  `mapstructure:"admin"`
 }
 
 var Cfg AppConfig
@@ -107,8 +96,6 @@ func InitConfig(defaultConfigContent []byte) {
 	}
 
 	// 7. 设置默认值
-	Cfg.Auth = GetDefaultAuthConfig()
-	Cfg.Confkeeper = GetDefaultConfkeeperConfig()
 	Cfg.Server.Name = ServerName
 	Cfg.Server.Version = Version
 	Cfg.Server.Author = Author

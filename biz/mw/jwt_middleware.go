@@ -9,35 +9,8 @@ import (
 )
 
 // JWTAuthMiddleware 鉴权中间件
-func JWTAuthMiddleware(excludedPaths []string) gin.HandlerFunc {
+func JWTAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// 获取请求路径并转换为字符串
-		path := c.Request.URL.Path
-
-		skipPrefixes := []string{"/api"}
-
-		// 需要鉴权的路径
-		for _, prefix := range skipPrefixes {
-			if !strings.HasPrefix(path, prefix) {
-				c.Next()
-				return
-			}
-		}
-
-		// 如果路径是 swagger 文档，则跳过鉴权
-		if strings.HasPrefix(path, "/api/swagger") {
-			c.Next()
-			return
-		}
-
-		// 如果路径在排除列表中，则跳过鉴权
-		for _, excludedPath := range excludedPaths {
-			if path == excludedPath {
-				c.Next() // 跳过中间件，直接处理请求
-				return
-			}
-		}
-
 		// 获取 Authorization Header
 		authHeader := c.Request.Header.Get("Authorization")
 		if authHeader == "" {
