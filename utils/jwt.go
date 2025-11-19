@@ -159,6 +159,5 @@ func ValidateToken(c *gin.Context, token string) error {
 	c.Set("userid", claims["userid"])
 	c.Set("username", claims["username"])
 
-	// 检查是否管理员
-	return IsAdmin(c)
+	return nil
 }
