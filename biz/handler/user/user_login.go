@@ -58,7 +58,7 @@ func UserLogin(c *gin.Context) {
 		token, _ = utils.GenerateToken(userData.ID, req.Username)
 	} else {
 		//如果没有选记住我就1小时token
-		token, _ = utils.GenerateToken(userData.ID, req.Username, 1)
+		token, _ = utils.GenerateToken(userData.ID, req.Username, 60)
 	}
 
 	resp.Code = response.Code_Success

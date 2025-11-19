@@ -29,7 +29,7 @@ func GenerateToken(userid uint, username string, expTime ...int) (string, error)
 	// 设置过期时间
 	var expireTime time.Duration
 	if len(expTime) > 0 {
-		expireTime = time.Second * time.Duration(expTime[0])
+		expireTime = time.Minute * time.Duration(expTime[0])
 	} else {
 		expireTime = time.Hour * time.Duration(config.Cfg.Jwt.ExpireTime)
 	}

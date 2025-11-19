@@ -10,24 +10,21 @@ import (
 )
 
 func InitData(db *gorm.DB) error {
-	// 插入初始化账号
-	var count int64
-	if err := db.Model(&model.User{}).Where("id = ?", 1).Count(&count).Error; err != nil {
-		return err
+	adminUser := &model.User{
+		Username: config.Cfg.Admin.Username,
+		Password: utils.MD5(config.Cfg.Admin.Password),
+		Enable:   true,
 	}
 
-	// 如果不存在则创建
-	if count == 0 {
-		slog.Infof("%s 用户不存在，密码为:%s", config.Cfg.Admin.Username, config.Cfg.Admin.Password)
-		adminUser := &model.User{
-			ID:       1,
-			Username: config.Cfg.Admin.Username,
-			Password: utils.MD5(config.Cfg.Admin.Password),
-			Enable:   true,
-		}
-		if err := db.Create(adminUser).Error; err != nil {
-			return err
-		}
+	result := db.Where(model.User{Username: config.Cfg.Admin.Username}).FirstOrCreate(adminUser)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected > 0 {
+		slog.Infof("创建管理员用户成功，用户名: %s, 密码: %s", config.Cfg.Admin.Username, config.Cfg.Admin.Password)
+	} else {
+		slog.Infof("管理员用户已存在: %s", config.Cfg.Admin.Username)
 	}
 
 	return nil
