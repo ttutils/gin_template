@@ -2,6 +2,6 @@ package config
 
 const (
 	ServerName string = "gin_template"
-	Version    string = "v0.0.31"
+	Version    string = "v0.0.1"
 	Author     string = "buyfakett"
 )

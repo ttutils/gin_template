@@ -43,5 +43,6 @@ ENV TERM=xterm-256color
 
 COPY --from=builder /app/${SERVER_NAME} /app/${SERVER_NAME}
 
+WORKDIR /app
 EXPOSE 8888
 ENTRYPOINT ["/app/confkeeper"]
