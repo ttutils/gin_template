@@ -17,13 +17,13 @@ jobs:
     permissions:
       packages: write # to publish to ghcr.io
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           repository: ${{ github.repository }}
           token: ${{ secrets.RELEASE_TOKEN }}
       - run: git fetch --unshallow --quiet --tags --force
       - name: Checkout web
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: gin_template/confkeeper-web-dev
           token: ${{ secrets.RELEASE_TOKEN }}
@@ -79,13 +79,13 @@ jobs:
     permissions:
       packages: write # to publish to ghcr.io
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           repository: ${{ github.repository }}
           token: ${{ secrets.RELEASE_TOKEN }}
       - run: git fetch --unshallow --quiet --tags --force
       - name: Checkout web
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: gin_template/confkeeper-web-dev
           token: ${{ secrets.RELEASE_TOKEN }}

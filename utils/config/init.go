@@ -81,8 +81,8 @@ func InitConfig(defaultConfigContent []byte) {
 		}
 	}
 
-	// 4. 环境变量覆盖（支持 HERTZ_SERVER_PORT 这类变量）
-	v.SetEnvPrefix("CONFKEEPER")
+	// 4. 环境变量覆盖
+	v.SetEnvPrefix("GIN_TEMPLATE")
 	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	v.AutomaticEnv()
 
