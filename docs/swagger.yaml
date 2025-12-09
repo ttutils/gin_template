@@ -67,6 +67,22 @@ definitions:
       total:
         type: integer
     type: object
+  user.CaptchaData:
+    properties:
+      base64_image:
+        type: string
+      id:
+        type: string
+    type: object
+  user.CaptchaResp:
+    properties:
+      code:
+        $ref: '#/definitions/response.Code'
+      data:
+        $ref: '#/definitions/user.CaptchaData'
+      msg:
+        type: string
+    type: object
   user.ChangePasswdReq:
     properties:
       password:
@@ -134,6 +150,14 @@ definitions:
     type: object
   user.LoginReq:
     properties:
+      captcha:
+        maxLength: 10
+        minLength: 1
+        type: string
+      captcha_id:
+        maxLength: 255
+        minLength: 1
+        type: string
       password:
         maxLength: 255
         minLength: 1
@@ -145,6 +169,8 @@ definitions:
         minLength: 1
         type: string
     required:
+    - captcha
+    - captcha_id
     - password
     - username
     type: object
@@ -307,6 +333,19 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: 创建用户
+      tags:
+      - 用户
+  /api/user/captcha:
+    get:
+      description: 生成登录验证码
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.CaptchaResp'
+      summary: 生成验证码
       tags:
       - 用户
   /api/user/change_passwd/{user_id}:

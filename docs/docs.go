@@ -234,6 +234,26 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/user/captcha": {
+            "get": {
+                "description": "生成登录验证码",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户"
+                ],
+                "summary": "生成验证码",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/user.CaptchaResp"
+                        }
+                    }
+                }
+            }
+        },
         "/api/user/change_passwd/{user_id}": {
             "post": {
                 "security": [
@@ -586,6 +606,31 @@ const docTemplate = `{
                 }
             }
         },
+        "user.CaptchaData": {
+            "type": "object",
+            "properties": {
+                "base64_image": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                }
+            }
+        },
+        "user.CaptchaResp": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "$ref": "#/definitions/response.Code"
+                },
+                "data": {
+                    "$ref": "#/definitions/user.CaptchaData"
+                },
+                "msg": {
+                    "type": "string"
+                }
+            }
+        },
         "user.ChangePasswdReq": {
             "type": "object",
             "required": [
@@ -688,10 +733,22 @@ const docTemplate = `{
         "user.LoginReq": {
             "type": "object",
             "required": [
+                "captcha",
+                "captcha_id",
                 "password",
                 "username"
             ],
             "properties": {
+                "captcha": {
+                    "type": "string",
+                    "maxLength": 10,
+                    "minLength": 1
+                },
+                "captcha_id": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                },
                 "password": {
                     "type": "string",
                     "maxLength": 255,

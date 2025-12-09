@@ -11,15 +11,16 @@ import (
 )
 
 type ServerConfig struct {
-	Port           int    `mapstructure:"port"`
-	Name           string `mapstructure:"name"`
-	Version        string `mapstructure:"version"`
-	Author         string `mapstructure:"author"`
-	LogLevel       string `mapstructure:"log_level"`
-	EnableSwagger  bool   `mapstructure:"swagger"`
-	IsDemo         bool   `mapstructure:"is_demo"`
-	DeleteDataCron string `mapstructure:"delete_data_cron"`
-	Zone           string `mapstructure:"zone"`
+	Port              int    `mapstructure:"port"`
+	Name              string `mapstructure:"name"`
+	Version           string `mapstructure:"version"`
+	Author            string `mapstructure:"author"`
+	LogLevel          string `mapstructure:"log_level"`
+	EnableSwagger     bool   `mapstructure:"swagger"`
+	IsDemo            bool   `mapstructure:"is_demo"`
+	DeleteDataCron    string `mapstructure:"delete_data_cron"`
+	Zone              string `mapstructure:"zone"`
+	CaptchaExpireTime int    `mapstructure:"captcha_expire_time"`
 }
 
 type DbConfig struct {

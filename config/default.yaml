@@ -4,6 +4,7 @@ server:
   swagger: true
   is_demo: false
   zone: Asia/Shanghai
+  captcha_expire_time: 5
 admin:
   username: admin
   password: admin123456

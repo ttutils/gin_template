@@ -12,6 +12,8 @@ import (
 type LoginReq struct {
 	Username   string `json:"username" binding:"required,min=1,max=255"`
 	Password   string `json:"password" binding:"required,min=1,max=255"`
+	CaptchaID  string `json:"captcha_id" binding:"required,min=1,max=255"`
+	Captcha    string `json:"captcha" binding:"required,min=1,max=10"`
 	RememberMe bool   `json:"remember_me" binding:"omitempty"`
 }
 
@@ -41,6 +43,15 @@ func UserLogin(c *gin.Context) {
 		return
 	}
 	resp := new(LoginResp)
+
+	// 验证验证码
+	if !captchaStore.Verify(req.CaptchaID, req.Captcha, true) {
+		c.JSON(http.StatusOK, &LoginResp{
+			Code: response.Code_CaptchaErr,
+			Msg:  "验证码错误或已过期",
+		})
+		return
+	}
 
 	userData, err := dal.UserLogin(req.Username)
 	if err != nil {
