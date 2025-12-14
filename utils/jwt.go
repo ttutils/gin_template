@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"gin_template/utils/config"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -61,8 +62,28 @@ func ParseToken(tokenStr string) (jwt.MapClaims, error) {
 		}
 		return jwtConfig.Secret, nil
 	})
+
 	if err != nil {
-		return nil, fmt.Errorf("token 解析失败: %v", err)
+		errMsg := err.Error()
+
+		// 检查各种可能的签名错误消息
+		if strings.Contains(errMsg, "signature") && strings.Contains(errMsg, "invalid") {
+			return nil, fmt.Errorf("令牌签名验证失败，请重新登录")
+		}
+
+		if strings.Contains(errMsg, "token is expired") {
+			return nil, fmt.Errorf("令牌已过期，请重新登录")
+		}
+
+		if strings.Contains(errMsg, "token is not valid yet") {
+			return nil, fmt.Errorf("令牌尚未生效")
+		}
+
+		if strings.Contains(errMsg, "token is malformed") {
+			return nil, fmt.Errorf("令牌格式错误")
+		}
+
+		return nil, fmt.Errorf("身份验证失败: %v", err)
 	}
 
 	// 验证 token 是否有效
