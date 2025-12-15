@@ -2,6 +2,7 @@ package handler
 
 import (
 	"gin_template/biz/dal"
+	"gin_template/internal/version"
 	"gin_template/utils/config"
 	"net/http"
 
@@ -43,7 +44,7 @@ func ServerInfo(c *gin.Context) {
 		"msg":  "获取成功",
 		"data": gin.H{
 			"name":    config.Cfg.Server.Name,
-			"version": config.Cfg.Server.Version,
+			"version": version.Version,
 		},
 	})
 }

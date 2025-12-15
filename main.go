@@ -8,6 +8,7 @@ import (
 	"gin_template/biz/mw"
 	genrouter "gin_template/biz/router"
 	"gin_template/docs"
+	"gin_template/internal/version"
 	"gin_template/utils/config"
 	"gin_template/utils/cron"
 	"gin_template/utils/logger"
@@ -45,7 +46,7 @@ func main() {
 	// 注册路由
 	genrouter.RegisterRoutes(r)
 
-	docs.SwaggerInfo.Version = config.Cfg.Server.Version
+	docs.SwaggerInfo.Version = version.Version
 	docs.SwaggerInfo.Title = config.Cfg.Server.Name
 	docs.SwaggerInfo.Description = fmt.Sprintf("%s by [%s](https://github.com/%s).",
 		config.Cfg.Server.Name, config.Cfg.Server.Author, config.Cfg.Server.Author)

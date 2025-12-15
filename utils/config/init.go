@@ -13,7 +13,6 @@ import (
 type ServerConfig struct {
 	Port              int    `mapstructure:"port"`
 	Name              string `mapstructure:"name"`
-	Version           string `mapstructure:"version"`
 	Author            string `mapstructure:"author"`
 	LogLevel          string `mapstructure:"log_level"`
 	EnableSwagger     bool   `mapstructure:"swagger"`
@@ -98,7 +97,6 @@ func InitConfig(defaultConfigContent []byte) {
 
 	// 7. 设置默认值
 	Cfg.Server.Name = ServerName
-	Cfg.Server.Version = Version
 	Cfg.Server.Author = Author
 	Cfg.Server.DeleteDataCron = "0 1 * * * *"
 }
