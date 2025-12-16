@@ -53,9 +53,14 @@ var Cfg AppConfig
 func InitConfig(defaultConfigContent []byte) {
 	// 1. 处理命令行参数
 	var configFile string
-	pflag.StringVar(&configFile, "config", "", "Path to custom config file")
-	pflag.IntVar(&Cfg.Server.Port, "server.port", 8888, "Server port")
+	pflag.StringVarP(&configFile, "config", "c", "", "配置文件")
+	pflag.IntVarP(&Cfg.Server.Port, "port", "p", 8888, "服务端口")
 	pflag.Parse()
+
+	if pflag.Lookup("help") != nil && pflag.Lookup("help").Value.String() == "true" {
+		pflag.PrintDefaults()
+		os.Exit(0)
+	}
 
 	v := viper.New()
 

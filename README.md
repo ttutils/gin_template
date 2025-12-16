@@ -41,7 +41,7 @@
 如果需要指定配置文件，可以使用以下命令
 
 ```bash
-go run . --config=config/config.yaml
+go run . -c=config/config.yaml
 ```
 
 ### 自动化
