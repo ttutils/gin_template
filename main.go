@@ -8,7 +8,6 @@ import (
 	"gin_template/biz/mw"
 	genrouter "gin_template/biz/router"
 	"gin_template/docs"
-	"gin_template/internal/version"
 	"gin_template/utils/config"
 	"gin_template/utils/cron"
 	"gin_template/utils/logger"
@@ -26,6 +25,9 @@ var defaultConfigContent []byte
 //go:embed static/*
 var staticFS embed.FS
 
+//go:embed internal/version/version.txt
+var version string
+
 // @contact.name buyfakett
 // @contact.url https://github.com/buyfakett
 
@@ -34,6 +36,10 @@ var staticFS embed.FS
 // @name authorization
 func main() {
 	config.InitConfig(defaultConfigContent)
+	// 如果显示版本信息，直接退出
+	if config.CliCfg.ShowVersion {
+		config.ShowVersionAndExit(version)
+	}
 	logger.InitLog(config.Cfg.Server.LogLevel)
 	if config.Cfg.Server.LogLevel != "debug" {
 		gin.SetMode(gin.ReleaseMode)
@@ -46,7 +52,7 @@ func main() {
 	// 注册路由
 	genrouter.RegisterRoutes(r)
 
-	docs.SwaggerInfo.Version = version.Version
+	docs.SwaggerInfo.Version = version
 	docs.SwaggerInfo.Title = config.Cfg.Server.Name
 	docs.SwaggerInfo.Description = fmt.Sprintf("%s by [%s](https://github.com/%s).",
 		config.Cfg.Server.Name, config.Cfg.Server.Author, config.Cfg.Server.Author)
