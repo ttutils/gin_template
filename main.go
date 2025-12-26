@@ -22,6 +22,9 @@ var defaultConfigContent []byte
 //go:embed static/*
 var staticFS embed.FS
 
+//go:embed docs/swagger.json
+var swaggerJSoN []byte
+
 //go:embed internal/version/version.txt
 var version string
 
@@ -59,6 +62,7 @@ func main() {
 				config.Cfg.Server.Name, config.Cfg.Server.Author, config.Cfg.Server.Author),
 			DarkMode: true,
 			BasePath: "/api/swagger",
+			DocJSON:  swaggerJSoN,
 			UITheme:  qingfeng.ThemeModern,
 		}))
 	}
