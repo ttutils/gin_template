@@ -3,7 +3,6 @@ module gin_template
 go 1.25.5
 
 require (
-	gitee.com/xiaowan1997/qingfeng v1.4.2
 	github.com/gin-gonic/gin v1.11.0
 	github.com/glebarez/sqlite v1.11.0
 	github.com/golang-jwt/jwt/v5 v5.3.0
@@ -14,6 +13,7 @@ require (
 	github.com/spf13/pflag v1.0.10
 	github.com/spf13/viper v1.21.0
 	github.com/swaggo/swag v1.16.6
+	github.com/wdcbot/qingfeng v1.4.4
 	gorm.io/driver/mysql v1.6.0
 	gorm.io/driver/postgres v1.6.0
 	gorm.io/gorm v1.31.1

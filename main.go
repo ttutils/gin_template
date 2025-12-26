@@ -11,9 +11,9 @@ import (
 	"gin_template/utils/cron"
 	"gin_template/utils/logger"
 
-	"gitee.com/xiaowan1997/qingfeng"
 	"github.com/gin-gonic/gin"
 	"github.com/gookit/slog"
+	"github.com/wdcbot/qingfeng"
 )
 
 //go:embed config/default.yaml
