@@ -13,7 +13,7 @@ require (
 	github.com/spf13/pflag v1.0.10
 	github.com/spf13/viper v1.21.0
 	github.com/swaggo/swag v1.16.6
-	github.com/wdcbot/qingfeng v1.4.4
+	github.com/wdcbot/qingfeng v1.5.1
 	gorm.io/driver/mysql v1.6.0
 	gorm.io/driver/postgres v1.6.0
 	gorm.io/gorm v1.31.1
