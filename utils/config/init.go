@@ -40,12 +40,18 @@ type AdminConfig struct {
 	Username string `mapstructure:"username"`
 	Password string `mapstructure:"password"`
 }
+type CaptchaConfig struct {
+	Length   int     `mapstructure:"length"`
+	MaxSkew  float64 `mapstructure:"max_skew"`
+	DotCount int     `mapstructure:"dot_count"`
+}
 
 type AppConfig struct {
-	Server ServerConfig `mapstructure:"server"`
-	Db     DbConfig     `mapstructure:"db"`
-	Jwt    JwtConfig    `mapstructure:"jwt"`
-	Admin  AdminConfig  `mapstructure:"admin"`
+	Server  ServerConfig  `mapstructure:"server"`
+	Db      DbConfig      `mapstructure:"db"`
+	Jwt     JwtConfig     `mapstructure:"jwt"`
+	Admin   AdminConfig   `mapstructure:"admin"`
+	Captcha CaptchaConfig `mapstructure:"captcha"`
 }
 
 var Cfg AppConfig

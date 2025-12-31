@@ -14,3 +14,7 @@ jwt:
 db:
   type: sqlite3
   database: confkeerer
+captcha:
+  length: 6
+  max_skew: 0.8
+  dot_count: 100

@@ -7,6 +7,7 @@ import (
 	"gin_template/biz/dal"
 	"gin_template/biz/mw"
 	genrouter "gin_template/biz/router"
+	"gin_template/utils/captcha"
 	"gin_template/utils/config"
 	"gin_template/utils/cron"
 	"gin_template/utils/logger"
@@ -45,6 +46,7 @@ func main() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 	dal.Init()
+	captcha.Init()
 	gin.ForceConsoleColor()
 	r := gin.Default()
 	r.Use(mw.StaticFileMiddleware(staticFS))

@@ -4,6 +4,7 @@ import (
 	"gin_template/biz/dal"
 	"gin_template/biz/response"
 	"gin_template/utils"
+	"gin_template/utils/captcha"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -45,7 +46,7 @@ func UserLogin(c *gin.Context) {
 	resp := new(LoginResp)
 
 	// 验证验证码
-	if !captchaStore.Verify(req.CaptchaID, req.Captcha, true) {
+	if !captcha.Store.Verify(req.CaptchaID, req.Captcha, true) {
 		c.JSON(http.StatusOK, &LoginResp{
 			Code: response.Code_CaptchaErr,
 			Msg:  "验证码错误或已过期",
