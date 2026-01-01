@@ -17,4 +17,4 @@ db:
 captcha:
   length: 6
   max_skew: 0.8
-  dot_count: 100
+  noise_count: 100

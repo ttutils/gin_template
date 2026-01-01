@@ -32,8 +32,8 @@ type CaptchaData struct {
 //	@router			/api/user/captcha [GET]
 func GenerateCaptcha(c *gin.Context) {
 	// 创建验证码
-	captcha := base64Captcha.NewCaptcha(captcha.Driver, captcha.Store)
-	id, base64Image, err := captcha.Generate()
+	NewCaptcha := base64Captcha.NewCaptcha(captcha.Driver, captcha.Store)
+	id, base64Image, _, err := NewCaptcha.Generate()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, &CaptchaResp{
 			Code: response.Code_Err,
