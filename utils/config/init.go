@@ -41,9 +41,8 @@ type AdminConfig struct {
 	Password string `mapstructure:"password"`
 }
 type CaptchaConfig struct {
-	Length     int     `mapstructure:"length"`
-	MaxSkew    float64 `mapstructure:"max_skew"`
-	NoiseCount int     `mapstructure:"noise_count"`
+	Length     int `mapstructure:"length"`
+	NoiseCount int `mapstructure:"noise_count"`
 }
 
 type AppConfig struct {
