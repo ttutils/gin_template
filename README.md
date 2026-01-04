@@ -19,9 +19,10 @@
 │     ├── dal                   # 数据库连接和操作
 │     ├── model                 # 数据库模型
 │     ├── handler               # 服务逻辑
-│     ├── pb                    # 模型(proto生成的)
+│     ├── response              # 通用返回
 │     ├── mw                    # 中间件
 │     └── router                # 路由
+├── internal                    # 版本
 ├── bootstrao                   # 启动代码
 ├── build.sh                    # 编译脚本
 ├── config                      # 配置文件
@@ -29,7 +30,6 @@
 │     └── default.yaml          # 默认配置文件(服务端这里定义的默认配置)
 ├── docs                        # swagger文档
 ├── main.go                     # 启动文件
-├── router.go                   # 自定义路由文件
 ├── static                      # 静态文件(前端编译结果，必须要index.html)
 └── utils                       # 工具包
 ```
