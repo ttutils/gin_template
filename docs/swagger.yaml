@@ -1,22 +1,22 @@
 definitions:
   response.Code:
     enum:
-    - 0
     - 200
     - 401
     - 500
     - 501
     - 502
     - 503
+    - 504
     type: integer
     x-enum-varnames:
-    - Code_Common
     - Code_Success
     - Code_Unauthorized
     - Code_Err
     - Code_DBErr
     - Code_PasswordErr
     - Code_AlreadyExists
+    - Code_CaptchaErr
   response.CommonResp:
     properties:
       code:

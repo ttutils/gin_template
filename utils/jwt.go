@@ -6,6 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"sync"
+
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/gookit/slog"
@@ -23,6 +25,9 @@ var (
 		IdentityKey:   "userid",
 		TokenHeadName: "Bearer",
 	}
+
+	// TokenStore 用于内存存储 userid -> token
+	TokenStore sync.Map
 )
 
 // GenerateToken 生成 JWT Token
@@ -37,11 +42,17 @@ func GenerateToken(userid uint, username string, expTime ...int) (string, error)
 
 	// 创建 claims
 	claims := jwt.MapClaims{
-		"userid":   int(userid),
-		"username": username,
-		"iss":      config.Cfg.Server.Name,
-		"exp":      time.Now().Add(expireTime).Unix(),
-		"orig_iat": time.Now().Unix(),
+		"userid":     int(userid),
+		"username":   username,
+		"iss":        config.Cfg.Server.Name,
+		"exp":        time.Now().Add(expireTime).Unix(),
+		"orig_iat":   time.Now().Unix(),
+		"token_type": "access", // 默认为访问令牌
+	}
+
+	// 如果是短期令牌，添加标识
+	if len(expTime) > 0 && expTime[0] > 0 && expTime[0] < 5 { // 小于5分钟的认为是短期令牌
+		claims["token_type"] = "short_term"
 	}
 
 	// 生成 token
@@ -50,6 +61,12 @@ func GenerateToken(userid uint, username string, expTime ...int) (string, error)
 	if err != nil {
 		return "", err
 	}
+
+	// Store token in memory if enabled
+	if config.Cfg.Jwt.EnableMemory {
+		TokenStore.Store(int(userid), tokenString)
+	}
+
 	return tokenString, nil
 }
 
@@ -107,15 +124,36 @@ func ParseToken(tokenStr string) (jwt.MapClaims, error) {
 	}
 
 	// userid 转换为 int
+	var userid int
 	if useridVal, ok := claims["userid"]; ok {
-		if userid, ok := useridVal.(float64); ok {
-			claims["userid"] = int(userid)
+		if uid, ok := useridVal.(float64); ok {
+			userid = int(uid)
+			claims["userid"] = userid
+		} else if uid, ok := useridVal.(int); ok {
+			userid = uid
 		}
 	}
 
 	// 验证 username
 	if _, ok := claims["username"].(string); !ok {
 		return nil, fmt.Errorf("token 缺少 username")
+	}
+
+	// Verify against in-memory store if enabled
+	if config.Cfg.Jwt.EnableMemory {
+		if storedToken, ok := TokenStore.Load(userid); ok {
+			if storedTokenStr, ok := storedToken.(string); ok {
+				if storedTokenStr != tokenStr {
+					// Token mismatch (e.g. user logged in elsewhere or token revoked)
+					return nil, fmt.Errorf("令牌无效或已失效，请重新登录")
+				}
+			} else {
+				return nil, fmt.Errorf("服务器内部错误: 令牌存储格式错误")
+			}
+		} else {
+			// No token found for this user in memory (perhaps server restarted or never logged in)
+			return nil, fmt.Errorf("令牌不存在或已失效，请重新登录")
+		}
 	}
 
 	return claims, nil
@@ -166,11 +204,16 @@ func IsAdmin(c *gin.Context) error {
 	return nil
 }
 
-func ValidateToken(c *gin.Context, token string) error {
+func ValidateShortTermToken(c *gin.Context, token string) error {
 	// 验证 token
 	claims, err := ParseToken(token)
 	if err != nil {
 		return fmt.Errorf("token 无效: %v", err)
+	}
+	// 检查短时token
+	tokenType, ok := claims["token_type"].(string)
+	if !ok || tokenType != "short_term" {
+		return fmt.Errorf("没有权限")
 	}
 
 	// 保存 claims 到 gin.Context
