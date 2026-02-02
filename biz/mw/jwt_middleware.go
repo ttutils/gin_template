@@ -9,7 +9,7 @@ import (
 )
 
 // JWTAuthMiddleware 鉴权中间件
-func JWTAuthMiddleware() gin.HandlerFunc {
+func JWTAuthMiddleware(isShortTerm ...bool) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 获取 Authorization Header
 		authHeader := c.Request.Header.Get("Authorization")
@@ -44,12 +44,26 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
+		// 检查短时token
+		if len(isShortTerm) > 0 && isShortTerm[0] {
+			tokenType, ok := claims["token_type"].(string)
+			if !ok || tokenType != "short_term" {
+				c.JSON(http.StatusUnauthorized, map[string]interface{}{
+					"code": http.StatusUnauthorized,
+					"msg":  "没有权限",
+				})
+				c.Abort() // 终止后续处理
+				return
+			}
+		}
+
 		// 将 claims 保存到上下文
 		for k, v := range claims {
 			c.Set(k, v)
 		}
 		c.Set("userid", claims["userid"])
 		c.Set("username", claims["username"])
+		c.Set("token", token)
 
 		// 如果验证通过，继续处理请求
 		c.Next()
