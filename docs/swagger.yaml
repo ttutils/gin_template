@@ -1,5 +1,5 @@
 definitions:
-  response.Code:
+  handler.Code:
     enum:
     - 200
     - 401
@@ -17,10 +17,10 @@ definitions:
     - Code_PasswordErr
     - Code_AlreadyExists
     - Code_CaptchaErr
-  response.CommonResp:
+  handler.CommonResp:
     properties:
       code:
-        $ref: '#/definitions/response.Code'
+        $ref: '#/definitions/handler.Code'
       msg:
         type: string
     type: object
@@ -57,7 +57,7 @@ definitions:
   tenant.ListResp:
     properties:
       code:
-        $ref: '#/definitions/response.Code'
+        $ref: '#/definitions/handler.Code'
       data:
         items:
           $ref: '#/definitions/tenant.ListData'
@@ -77,7 +77,7 @@ definitions:
   user.CaptchaResp:
     properties:
       code:
-        $ref: '#/definitions/response.Code'
+        $ref: '#/definitions/handler.Code'
       data:
         $ref: '#/definitions/user.CaptchaData'
       msg:
@@ -113,7 +113,7 @@ definitions:
   user.InfoResp:
     properties:
       code:
-        $ref: '#/definitions/response.Code'
+        $ref: '#/definitions/handler.Code'
       data:
         $ref: '#/definitions/user.InfoData'
       msg:
@@ -133,7 +133,7 @@ definitions:
   user.ListResp:
     properties:
       code:
-        $ref: '#/definitions/response.Code'
+        $ref: '#/definitions/handler.Code'
       data:
         items:
           $ref: '#/definitions/user.ListData'
@@ -177,7 +177,7 @@ definitions:
   user.LoginResp:
     properties:
       code:
-        $ref: '#/definitions/response.Code'
+        $ref: '#/definitions/handler.Code'
       data:
         $ref: '#/definitions/user.LoginData'
       msg:
@@ -254,7 +254,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.CommonResp'
+            $ref: '#/definitions/handler.CommonResp'
       security:
       - ApiKeyAuth: []
       summary: 创建命名空间
@@ -277,7 +277,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.CommonResp'
+            $ref: '#/definitions/handler.CommonResp'
       security:
       - ApiKeyAuth: []
       summary: 删除命名空间
@@ -329,7 +329,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.CommonResp'
+            $ref: '#/definitions/handler.CommonResp'
       security:
       - ApiKeyAuth: []
       summary: 创建用户
@@ -371,7 +371,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.CommonResp'
+            $ref: '#/definitions/handler.CommonResp'
       security:
       - ApiKeyAuth: []
       summary: 修改用户密码
@@ -394,7 +394,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.CommonResp'
+            $ref: '#/definitions/handler.CommonResp'
       security:
       - ApiKeyAuth: []
       summary: 删除用户
@@ -504,7 +504,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.CommonResp'
+            $ref: '#/definitions/handler.CommonResp'
       security:
       - ApiKeyAuth: []
       summary: 更新用户

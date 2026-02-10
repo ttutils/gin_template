@@ -42,9 +42,12 @@ type AdminConfig struct {
 	Username string `mapstructure:"username"`
 	Password string `mapstructure:"password"`
 }
+
 type CaptchaConfig struct {
-	Length     int `mapstructure:"length"`
-	NoiseCount int `mapstructure:"noise_count"`
+	Length           int    `mapstructure:"length"`
+	NoiseCount       int    `mapstructure:"noise_count"`
+	InterferenceLine int    `mapstructure:"interference_line"`
+	CharacterSet     string `mapstructure:"character_set"`
 }
 
 type AppConfig struct {

@@ -2,7 +2,7 @@ package user
 
 import (
 	"gin_template/biz/dal"
-	"gin_template/biz/response"
+	"gin_template/biz/handler"
 	"gin_template/utils"
 	"net/http"
 	"strconv"
@@ -23,10 +23,10 @@ type ListData struct {
 }
 
 type ListResp struct {
-	Code  response.Code `json:"code"`
-	Msg   string        `json:"msg"`
-	Total int64         `json:"total"`
-	Data  []*ListData   `json:"data"`
+	Code  handler.Code `json:"code"`
+	Msg   string       `json:"msg"`
+	Total int64        `json:"total"`
+	Data  []*ListData  `json:"data"`
 }
 
 // UserList 用户列表
@@ -54,7 +54,7 @@ func UserList(c *gin.Context) {
 	err := utils.IsAdmin(c)
 	if err != nil {
 		c.JSON(http.StatusOK, &ListResp{
-			Code: response.Code_Unauthorized,
+			Code: handler.Code_Unauthorized,
 			Msg:  err.Error(),
 		})
 		return
@@ -75,7 +75,7 @@ func UserList(c *gin.Context) {
 	users, total, err := dal.GetUserList(int(req.PageSize), int(offset), req.Username)
 	if err != nil {
 		c.JSON(http.StatusOK, &ListResp{
-			Code: response.Code_DBErr,
+			Code: handler.Code_DBErr,
 			Msg:  "获取用户列表失败: " + err.Error(),
 		})
 		return
@@ -91,7 +91,7 @@ func UserList(c *gin.Context) {
 		})
 	}
 
-	resp.Code = response.Code_Success
+	resp.Code = handler.Code_Success
 	resp.Msg = "获取成功"
 	resp.Total = total
 	resp.Data = userList

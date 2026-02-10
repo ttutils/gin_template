@@ -97,7 +97,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.CommonResp"
+                            "$ref": "#/definitions/handler.CommonResp"
                         }
                     }
                 }
@@ -134,7 +134,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.CommonResp"
+                            "$ref": "#/definitions/handler.CommonResp"
                         }
                     }
                 }
@@ -217,7 +217,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.CommonResp"
+                            "$ref": "#/definitions/handler.CommonResp"
                         }
                     }
                 }
@@ -283,7 +283,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.CommonResp"
+                            "$ref": "#/definitions/handler.CommonResp"
                         }
                     }
                 }
@@ -320,7 +320,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.CommonResp"
+                            "$ref": "#/definitions/handler.CommonResp"
                         }
                     }
                 }
@@ -493,7 +493,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.CommonResp"
+                            "$ref": "#/definitions/handler.CommonResp"
                         }
                     }
                 }
@@ -501,7 +501,7 @@
         }
     },
     "definitions": {
-        "response.Code": {
+        "handler.Code": {
             "type": "integer",
             "enum": [
                 200,
@@ -522,11 +522,11 @@
                 "Code_CaptchaErr"
             ]
         },
-        "response.CommonResp": {
+        "handler.CommonResp": {
             "type": "object",
             "properties": {
                 "code": {
-                    "$ref": "#/definitions/response.Code"
+                    "$ref": "#/definitions/handler.Code"
                 },
                 "msg": {
                     "type": "string"
@@ -579,7 +579,7 @@
             "type": "object",
             "properties": {
                 "code": {
-                    "$ref": "#/definitions/response.Code"
+                    "$ref": "#/definitions/handler.Code"
                 },
                 "data": {
                     "type": "array",
@@ -610,7 +610,7 @@
             "type": "object",
             "properties": {
                 "code": {
-                    "$ref": "#/definitions/response.Code"
+                    "$ref": "#/definitions/handler.Code"
                 },
                 "data": {
                     "$ref": "#/definitions/user.CaptchaData"
@@ -664,7 +664,7 @@
             "type": "object",
             "properties": {
                 "code": {
-                    "$ref": "#/definitions/response.Code"
+                    "$ref": "#/definitions/handler.Code"
                 },
                 "data": {
                     "$ref": "#/definitions/user.InfoData"
@@ -695,7 +695,7 @@
             "type": "object",
             "properties": {
                 "code": {
-                    "$ref": "#/definitions/response.Code"
+                    "$ref": "#/definitions/handler.Code"
                 },
                 "data": {
                     "type": "array",
@@ -757,7 +757,7 @@
             "type": "object",
             "properties": {
                 "code": {
-                    "$ref": "#/definitions/response.Code"
+                    "$ref": "#/definitions/handler.Code"
                 },
                 "data": {
                     "$ref": "#/definitions/user.LoginData"

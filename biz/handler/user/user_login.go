@@ -2,7 +2,7 @@ package user
 
 import (
 	"gin_template/biz/dal"
-	"gin_template/biz/response"
+	"gin_template/biz/handler"
 	"gin_template/utils"
 	"gin_template/utils/captcha"
 	"net/http"
@@ -23,9 +23,9 @@ type LoginData struct {
 }
 
 type LoginResp struct {
-	Code response.Code `json:"code"`
-	Msg  string        `json:"msg"`
-	Data *LoginData    `json:"data"`
+	Code handler.Code `json:"code"`
+	Msg  string       `json:"msg"`
+	Data *LoginData   `json:"data"`
 }
 
 // UserLogin 用户登录
@@ -48,7 +48,7 @@ func UserLogin(c *gin.Context) {
 	// 验证验证码
 	if !captcha.Store.Verify(req.CaptchaID, req.Captcha, true) {
 		c.JSON(http.StatusOK, &LoginResp{
-			Code: response.Code_CaptchaErr,
+			Code: handler.Code_CaptchaErr,
 			Msg:  "验证码错误或已过期",
 		})
 		return
@@ -56,12 +56,12 @@ func UserLogin(c *gin.Context) {
 
 	userData, err := dal.UserLogin(req.Username)
 	if err != nil {
-		c.JSON(http.StatusOK, &LoginResp{Code: response.Code_DBErr, Msg: err.Error()})
+		c.JSON(http.StatusOK, &LoginResp{Code: handler.Code_DBErr, Msg: err.Error()})
 		return
 	}
 
 	if userData.Password != utils.MD5(req.Password) {
-		c.JSON(http.StatusOK, &LoginResp{Code: response.Code_PasswordErr, Msg: "密码错误"})
+		c.JSON(http.StatusOK, &LoginResp{Code: handler.Code_PasswordErr, Msg: "密码错误"})
 		return
 	}
 
@@ -73,7 +73,7 @@ func UserLogin(c *gin.Context) {
 		token, _ = utils.GenerateToken(userData.ID, req.Username, 60)
 	}
 
-	resp.Code = response.Code_Success
+	resp.Code = handler.Code_Success
 	resp.Msg = "登录成功"
 	resp.Data = &LoginData{
 		Token: token,

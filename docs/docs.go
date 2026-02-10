@@ -109,7 +109,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.CommonResp"
+                            "$ref": "#/definitions/handler.CommonResp"
                         }
                     }
                 }
@@ -146,7 +146,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.CommonResp"
+                            "$ref": "#/definitions/handler.CommonResp"
                         }
                     }
                 }
@@ -229,7 +229,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.CommonResp"
+                            "$ref": "#/definitions/handler.CommonResp"
                         }
                     }
                 }
@@ -295,7 +295,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.CommonResp"
+                            "$ref": "#/definitions/handler.CommonResp"
                         }
                     }
                 }
@@ -332,7 +332,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.CommonResp"
+                            "$ref": "#/definitions/handler.CommonResp"
                         }
                     }
                 }
@@ -505,7 +505,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.CommonResp"
+                            "$ref": "#/definitions/handler.CommonResp"
                         }
                     }
                 }
@@ -513,7 +513,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "response.Code": {
+        "handler.Code": {
             "type": "integer",
             "enum": [
                 200,
@@ -534,11 +534,11 @@ const docTemplate = `{
                 "Code_CaptchaErr"
             ]
         },
-        "response.CommonResp": {
+        "handler.CommonResp": {
             "type": "object",
             "properties": {
                 "code": {
-                    "$ref": "#/definitions/response.Code"
+                    "$ref": "#/definitions/handler.Code"
                 },
                 "msg": {
                     "type": "string"
@@ -591,7 +591,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "code": {
-                    "$ref": "#/definitions/response.Code"
+                    "$ref": "#/definitions/handler.Code"
                 },
                 "data": {
                     "type": "array",
@@ -622,7 +622,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "code": {
-                    "$ref": "#/definitions/response.Code"
+                    "$ref": "#/definitions/handler.Code"
                 },
                 "data": {
                     "$ref": "#/definitions/user.CaptchaData"
@@ -676,7 +676,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "code": {
-                    "$ref": "#/definitions/response.Code"
+                    "$ref": "#/definitions/handler.Code"
                 },
                 "data": {
                     "$ref": "#/definitions/user.InfoData"
@@ -707,7 +707,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "code": {
-                    "$ref": "#/definitions/response.Code"
+                    "$ref": "#/definitions/handler.Code"
                 },
                 "data": {
                     "type": "array",
@@ -769,7 +769,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "code": {
-                    "$ref": "#/definitions/response.Code"
+                    "$ref": "#/definitions/handler.Code"
                 },
                 "data": {
                     "$ref": "#/definitions/user.LoginData"

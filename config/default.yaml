@@ -19,3 +19,5 @@ db:
 captcha:
   length: 6
   noise_count: 50
+  interference_line: 2
+  character_set: abdefghjkmnpqrstuvwxyABDEFHJKMNPQRSTUVWXY023456789
