@@ -8,6 +8,7 @@ definitions:
     - 502
     - 503
     - 504
+    - 505
     type: integer
     x-enum-varnames:
     - Code_Success
@@ -17,13 +18,7 @@ definitions:
     - Code_PasswordErr
     - Code_AlreadyExists
     - Code_CaptchaErr
-  handler.CommonResp:
-    properties:
-      code:
-        $ref: '#/definitions/handler.Code'
-      msg:
-        type: string
-    type: object
+    - Code_UserErr
   tenant.CreateReq:
     properties:
       tenant_desc:
@@ -42,6 +37,20 @@ definitions:
     - tenant_desc
     - tenant_id
     - tenant_name
+    type: object
+  tenant.CreateTenantResp:
+    properties:
+      code:
+        $ref: '#/definitions/handler.Code'
+      msg:
+        type: string
+    type: object
+  tenant.DeleteTenantResp:
+    properties:
+      code:
+        $ref: '#/definitions/handler.Code'
+      msg:
+        type: string
     type: object
   tenant.ListData:
     properties:
@@ -92,6 +101,13 @@ definitions:
     required:
     - password
     type: object
+  user.ChangePasswordResp:
+    properties:
+      code:
+        $ref: '#/definitions/handler.Code'
+      msg:
+        type: string
+    type: object
   user.CreateReq:
     properties:
       username:
@@ -100,6 +116,20 @@ definitions:
         type: string
     required:
     - username
+    type: object
+  user.CreateUserResp:
+    properties:
+      code:
+        $ref: '#/definitions/handler.Code'
+      msg:
+        type: string
+    type: object
+  user.DeleteUserResp:
+    properties:
+      code:
+        $ref: '#/definitions/handler.Code'
+      msg:
+        type: string
     type: object
   user.InfoData:
     properties:
@@ -118,8 +148,6 @@ definitions:
         $ref: '#/definitions/user.InfoData'
       msg:
         type: string
-      total:
-        type: integer
     type: object
   user.ListData:
     properties:
@@ -183,6 +211,13 @@ definitions:
       msg:
         type: string
     type: object
+  user.LogoutResp:
+    properties:
+      code:
+        $ref: '#/definitions/handler.Code'
+      msg:
+        type: string
+    type: object
   user.UpdateReq:
     properties:
       enable:
@@ -190,6 +225,13 @@ definitions:
       username:
         maxLength: 255
         minLength: 1
+        type: string
+    type: object
+  user.UpdateUserResp:
+    properties:
+      code:
+        $ref: '#/definitions/handler.Code'
+      msg:
         type: string
     type: object
 info:
@@ -254,7 +296,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handler.CommonResp'
+            $ref: '#/definitions/tenant.CreateTenantResp'
       security:
       - ApiKeyAuth: []
       summary: 创建命名空间
@@ -277,7 +319,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handler.CommonResp'
+            $ref: '#/definitions/tenant.DeleteTenantResp'
       security:
       - ApiKeyAuth: []
       summary: 删除命名空间
@@ -329,7 +371,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handler.CommonResp'
+            $ref: '#/definitions/user.CreateUserResp'
       security:
       - ApiKeyAuth: []
       summary: 创建用户
@@ -371,7 +413,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handler.CommonResp'
+            $ref: '#/definitions/user.ChangePasswordResp'
       security:
       - ApiKeyAuth: []
       summary: 修改用户密码
@@ -394,7 +436,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handler.CommonResp'
+            $ref: '#/definitions/user.DeleteUserResp'
       security:
       - ApiKeyAuth: []
       summary: 删除用户
@@ -481,6 +523,21 @@ paths:
       summary: 用户登录
       tags:
       - 用户
+  /api/user/logout:
+    post:
+      consumes:
+      - application/json
+      description: 用户登出，删除JWT token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.LogoutResp'
+      summary: 用户登出
+      tags:
+      - 用户
   /api/user/update/{user_id}:
     post:
       consumes:
@@ -504,7 +561,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handler.CommonResp'
+            $ref: '#/definitions/user.UpdateUserResp'
       security:
       - ApiKeyAuth: []
       summary: 更新用户

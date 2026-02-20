@@ -3,7 +3,6 @@ package user
 import (
 	"gin_template/biz/dal"
 	"gin_template/biz/handler"
-	"gin_template/utils"
 	"net/http"
 	"strconv"
 
@@ -23,25 +22,25 @@ type ListData struct {
 }
 
 type ListResp struct {
-	Code  handler.Code `json:"code"`
-	Msg   string       `json:"msg"`
-	Total int64        `json:"total"`
-	Data  []*ListData  `json:"data"`
+	handler.CommonResp
+	Total int64       `json:"total"`
+	Data  []*ListData `json:"data"`
 }
 
 // UserList 用户列表
-// @Tags 用户
-// @Summary 用户列表
-// @Description 用户列表
-// @Accept application/json
-// @Produce application/json
-// @Param page query int false "页码" default(1)
-// @Param page_size query int false "每页数量" default(10)
-// @Param username query string false "用户名"
-// @Param email query string false "邮箱"
-// @Success 200 {object} ListResp
-// @Security ApiKeyAuth
-// @router /api/user/list [GET]
+//
+//	@Tags			用户
+//	@Summary		用户列表
+//	@Description	用户列表
+//	@Accept			application/json
+//	@Produce		application/json
+//	@Param			page		query		int		false	"页码"	default(1)
+//	@Param			page_size	query		int		false	"每页数量"	default(10)
+//	@Param			username	query		string	false	"用户名"
+//	@Param			email		query		string	false	"邮箱"
+//	@Success		200			{object}	ListResp
+//	@Security		ApiKeyAuth
+//	@router			/api/user/list [GET]
 func UserList(c *gin.Context) {
 	req := new(ListReq)
 	if err := c.ShouldBindQuery(req); err != nil {
@@ -49,16 +48,6 @@ func UserList(c *gin.Context) {
 		return
 	}
 	resp := new(ListResp)
-
-	// 检查管理员权限
-	err := utils.IsAdmin(c)
-	if err != nil {
-		c.JSON(http.StatusOK, &ListResp{
-			Code: handler.Code_Unauthorized,
-			Msg:  err.Error(),
-		})
-		return
-	}
 
 	// 设置分页默认值
 	if req.Page == 0 {
@@ -75,8 +64,10 @@ func UserList(c *gin.Context) {
 	users, total, err := dal.GetUserList(int(req.PageSize), int(offset), req.Username)
 	if err != nil {
 		c.JSON(http.StatusOK, &ListResp{
-			Code: handler.Code_DBErr,
-			Msg:  "获取用户列表失败: " + err.Error(),
+			CommonResp: handler.CommonResp{
+				Code: handler.Code_DBErr,
+				Msg:  "获取用户列表失败: " + err.Error(),
+			},
 		})
 		return
 	}
@@ -91,8 +82,10 @@ func UserList(c *gin.Context) {
 		})
 	}
 
-	resp.Code = handler.Code_Success
-	resp.Msg = "获取成功"
+	resp.CommonResp = handler.CommonResp{
+		Code: handler.Code_Success,
+		Msg:  "获取成功",
+	}
 	resp.Total = total
 	resp.Data = userList
 

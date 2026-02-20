@@ -1,6 +1,8 @@
 package mw
 
 import (
+	"gin_template/biz/dal"
+	"gin_template/biz/handler"
 	"gin_template/utils"
 	"net/http"
 	"strings"
@@ -8,8 +10,55 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// CheckUserEnabled 检查用户是否启用，返回 true 表示已处理（需终止），false 表示通过
+func CheckUserEnabled(c *gin.Context) bool {
+	userID, ok := c.Get("userid")
+	if !ok {
+		return false
+	}
+
+	uid, ok := userID.(int)
+	if !ok {
+		return false
+	}
+
+	user, err := dal.GetUserByID(uid)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, map[string]interface{}{
+			"code": handler.Code_Unauthorized,
+			"msg":  "查询用户信息失败",
+		})
+		c.Abort()
+		return true
+	}
+	if user == nil {
+		c.JSON(http.StatusUnauthorized, map[string]interface{}{
+			"code": handler.Code_Unauthorized,
+			"msg":  "用户不存在",
+		})
+		c.Abort()
+		return true
+	}
+	if !user.Enable {
+		c.JSON(http.StatusUnauthorized, map[string]interface{}{
+			"code": handler.Code_UserErr,
+			"msg":  "用户已被禁用",
+		})
+		c.Abort()
+		return true
+	}
+	return false
+}
+
 // JWTAuthMiddleware 鉴权中间件
-func JWTAuthMiddleware(isShortTerm ...bool) gin.HandlerFunc {
+func JWTAuthMiddleware(opts ...utils.AuthOptions) gin.HandlerFunc {
+	// 初始化默认值（Go 结构体布尔字段默认就是 false）
+	var opt utils.AuthOptions
+
+	// 如果用户传了参数，就用用户传的第一个参数覆盖默认值
+	if len(opts) > 0 {
+		opt = opts[0]
+	}
 	return func(c *gin.Context) {
 		// 获取 Authorization Header
 		authHeader := c.Request.Header.Get("Authorization")
@@ -45,12 +94,25 @@ func JWTAuthMiddleware(isShortTerm ...bool) gin.HandlerFunc {
 		}
 
 		// 检查短时token
-		if len(isShortTerm) > 0 && isShortTerm[0] {
+		if opt.IsShortTerm {
 			tokenType, ok := claims["token_type"].(string)
 			if !ok || tokenType != "short_term" {
 				c.JSON(http.StatusUnauthorized, map[string]interface{}{
 					"code": http.StatusUnauthorized,
 					"msg":  "没有权限",
+				})
+				c.Abort() // 终止后续处理
+				return
+			}
+		}
+
+		if opt.CheckAdmin {
+			// 检查是否为管理员
+			err := utils.IsAdmin(c)
+			if err != nil {
+				c.JSON(http.StatusOK, map[string]interface{}{
+					"code": http.StatusUnauthorized,
+					"msg":  "不是管理员",
 				})
 				c.Abort() // 终止后续处理
 				return
@@ -64,6 +126,11 @@ func JWTAuthMiddleware(isShortTerm ...bool) gin.HandlerFunc {
 		c.Set("userid", claims["userid"])
 		c.Set("username", claims["username"])
 		c.Set("token", token)
+
+		// 检查用户是否启用
+		if CheckUserEnabled(c) {
+			return
+		}
 
 		// 如果验证通过，继续处理请求
 		c.Next()

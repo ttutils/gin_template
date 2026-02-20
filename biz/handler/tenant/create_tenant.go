@@ -4,7 +4,6 @@ import (
 	"gin_template/biz/dal"
 	"gin_template/biz/handler"
 	"gin_template/biz/model"
-	"gin_template/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -16,47 +15,46 @@ type CreateReq struct {
 	TenantDesc string `json:"tenant_desc" binding:"required,min=1,max=255"`
 }
 
+type CreateTenantResp struct {
+	handler.CommonResp
+}
+
 // CreateTenant 创建命名空间
-// @Tags 命名空间
-// @Summary 创建命名空间
-// @Description 创建命名空间
-// @Accept application/json
-// @Produce application/json
-// @Param request body CreateReq true "创建命名空间请求参数"
-// @Success 200 {object} handler.CommonResp
-// @Security ApiKeyAuth
-// @router /api/tenant/add [PUT]
+//
+//	@Tags			命名空间
+//	@Summary		创建命名空间
+//	@Description	创建命名空间
+//	@Accept			application/json
+//	@Produce		application/json
+//	@Param			request	body		CreateReq	true	"创建命名空间请求参数"
+//	@Success		200		{object}	CreateTenantResp
+//	@Security		ApiKeyAuth
+//	@router			/api/tenant/add [PUT]
 func CreateTenant(c *gin.Context) {
 	req := new(CreateReq)
 	if err := c.ShouldBind(req); err != nil {
 		c.String(http.StatusBadRequest, err.Error())
 		return
 	}
-	resp := new(handler.CommonResp)
-
-	// 检查是否为管理员
-	err := utils.IsAdmin(c)
-	if err != nil {
-		c.JSON(http.StatusOK, &handler.CommonResp{
-			Code: handler.Code_Unauthorized,
-			Msg:  err.Error(),
-		})
-		return
-	}
+	resp := new(CreateTenantResp)
 
 	// 检查命名空间是否已存在
 	exist, err := dal.IsTenantIdExists(req.TenantId)
 	if err != nil {
-		c.JSON(http.StatusOK, &handler.CommonResp{
-			Code: handler.Code_DBErr,
-			Msg:  "检查命名空间失败: " + err.Error(),
+		c.JSON(http.StatusOK, &CreateTenantResp{
+			CommonResp: handler.CommonResp{
+				Code: handler.Code_DBErr,
+				Msg:  "检查命名空间失败: " + err.Error(),
+			},
 		})
 		return
 	}
 	if exist {
-		c.JSON(http.StatusOK, &handler.CommonResp{
-			Code: handler.Code_AlreadyExists,
-			Msg:  "该命名空间已存在",
+		c.JSON(http.StatusOK, &CreateTenantResp{
+			CommonResp: handler.CommonResp{
+				Code: handler.Code_AlreadyExists,
+				Msg:  "该命名空间已存在",
+			},
 		})
 		return
 	}
@@ -68,12 +66,19 @@ func CreateTenant(c *gin.Context) {
 	}
 
 	if err = dal.CreateTenant([]*model.TenantInfo{t}); err != nil {
-		c.JSON(http.StatusOK, &handler.CommonResp{Code: handler.Code_DBErr, Msg: "命名空间新建失败: " + err.Error()})
+		c.JSON(http.StatusOK, &CreateTenantResp{
+			CommonResp: handler.CommonResp{
+				Code: handler.Code_DBErr,
+				Msg:  "命名空间新建失败: " + err.Error(),
+			},
+		})
 		return
 	}
 
-	resp.Code = handler.Code_Success
-	resp.Msg = "新建命名空间成功"
+	resp.CommonResp = handler.CommonResp{
+		Code: handler.Code_Success,
+		Msg:  "新建命名空间成功",
+	}
 
 	c.JSON(http.StatusOK, resp)
 }

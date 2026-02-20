@@ -21,22 +21,21 @@ type InfoData struct {
 }
 
 type InfoResp struct {
-	Code  handler.Code `json:"code"`
-	Msg   string       `json:"msg"`
-	Total int64        `json:"total"`
-	Data  *InfoData    `json:"data"`
+	handler.CommonResp
+	Data *InfoData `json:"data"`
 }
 
 // UserInfo 用户信息
-// @Tags 用户
-// @Summary 用户信息
-// @Description 用户信息
-// @Accept application/json
-// @Produce application/json
-// @Param user_id path string true "用户ID"
-// @Success 200 {object} InfoResp
-// @Security ApiKeyAuth
-// @router /api/user/info/{user_id} [GET]
+//
+//	@Tags			用户
+//	@Summary		用户信息
+//	@Description	用户信息
+//	@Accept			application/json
+//	@Produce		application/json
+//	@Param			user_id	path		string	true	"用户ID"
+//	@Success		200		{object}	InfoResp
+//	@Security		ApiKeyAuth
+//	@router			/api/user/info/{user_id} [GET]
 func UserInfo(c *gin.Context) {
 	req := new(InfoReq)
 	if err := c.ShouldBindUri(req); err != nil {
@@ -49,7 +48,12 @@ func UserInfo(c *gin.Context) {
 	tokenUserId, _ := utils.GetUseridFromContext(c)
 
 	if userId != tokenUserId {
-		c.JSON(http.StatusOK, &InfoResp{Code: handler.Code_Unauthorized, Msg: "不能修改获取别人"})
+		c.JSON(http.StatusOK, &InfoResp{
+			CommonResp: handler.CommonResp{
+				Code: handler.Code_Unauthorized,
+				Msg:  "不能修改获取别人",
+			},
+		})
 		return
 	}
 
@@ -57,21 +61,27 @@ func UserInfo(c *gin.Context) {
 	userData, err := dal.GetUserByID(userId)
 	if err != nil {
 		c.JSON(http.StatusOK, &InfoResp{
-			Code: handler.Code_DBErr,
-			Msg:  "数据库查询错误: " + err.Error(),
+			CommonResp: handler.CommonResp{
+				Code: handler.Code_DBErr,
+				Msg:  "数据库查询错误: " + err.Error(),
+			},
 		})
 		return
 	}
 	if userData == nil {
 		c.JSON(http.StatusOK, &InfoResp{
-			Code: handler.Code_DBErr,
-			Msg:  "用户未找到",
+			CommonResp: handler.CommonResp{
+				Code: handler.Code_DBErr,
+				Msg:  "用户未找到",
+			},
 		})
 		return
 	}
 
-	resp.Code = handler.Code_Success
-	resp.Msg = "用户信息更新成功"
+	resp.CommonResp = handler.CommonResp{
+		Code: handler.Code_Success,
+		Msg:  "用户信息获取成功",
+	}
 	resp.Data = &InfoData{
 		UserId:   strconv.Itoa(int(userData.ID)),
 		Username: userData.Username,

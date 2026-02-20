@@ -23,20 +23,20 @@ type LoginData struct {
 }
 
 type LoginResp struct {
-	Code handler.Code `json:"code"`
-	Msg  string       `json:"msg"`
-	Data *LoginData   `json:"data"`
+	handler.CommonResp
+	Data *LoginData `json:"data"`
 }
 
 // UserLogin 用户登录
-// @Tags 用户
-// @Summary 用户登录
-// @Description 用户登录
-// @Accept application/json
-// @Produce application/json
-// @Param req body LoginReq true "登录凭证"
-// @Success 200 {object} LoginResp
-// @router /api/user/login [POST]
+//
+//	@Tags			用户
+//	@Summary		用户登录
+//	@Description	用户登录
+//	@Accept			application/json
+//	@Produce		application/json
+//	@Param			req	body		LoginReq	true	"登录凭证"
+//	@Success		200	{object}	LoginResp
+//	@router			/api/user/login [POST]
 func UserLogin(c *gin.Context) {
 	req := new(LoginReq)
 	if err := c.ShouldBind(req); err != nil {
@@ -48,20 +48,32 @@ func UserLogin(c *gin.Context) {
 	// 验证验证码
 	if !captcha.Store.Verify(req.CaptchaID, req.Captcha, true) {
 		c.JSON(http.StatusOK, &LoginResp{
-			Code: handler.Code_CaptchaErr,
-			Msg:  "验证码错误或已过期",
+			CommonResp: handler.CommonResp{
+				Code: handler.Code_CaptchaErr,
+				Msg:  "验证码错误或已过期",
+			},
 		})
 		return
 	}
 
 	userData, err := dal.UserLogin(req.Username)
 	if err != nil {
-		c.JSON(http.StatusOK, &LoginResp{Code: handler.Code_DBErr, Msg: err.Error()})
+		c.JSON(http.StatusOK, &LoginResp{
+			CommonResp: handler.CommonResp{
+				Code: handler.Code_CaptchaErr,
+				Msg:  err.Error(),
+			},
+		})
 		return
 	}
 
 	if userData.Password != utils.MD5(req.Password) {
-		c.JSON(http.StatusOK, &LoginResp{Code: handler.Code_PasswordErr, Msg: "密码错误"})
+		c.JSON(http.StatusOK, &LoginResp{
+			CommonResp: handler.CommonResp{
+				Code: handler.Code_CaptchaErr,
+				Msg:  "密码错误",
+			},
+		})
 		return
 	}
 
@@ -73,8 +85,10 @@ func UserLogin(c *gin.Context) {
 		token, _ = utils.GenerateToken(userData.ID, req.Username, 60)
 	}
 
-	resp.Code = handler.Code_Success
-	resp.Msg = "登录成功"
+	resp.CommonResp = handler.CommonResp{
+		Code: handler.Code_Success,
+		Msg:  "登录成功",
+	}
 	resp.Data = &LoginData{
 		Token: token,
 	}

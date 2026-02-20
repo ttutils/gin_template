@@ -22,23 +22,23 @@ type ListData struct {
 }
 
 type ListResp struct {
-	Code  handler.Code `json:"code"`
-	Msg   string       `json:"msg"`
-	Total int64        `json:"total"`
-	Data  []*ListData  `json:"data"`
+	handler.CommonResp
+	Total int64       `json:"total"`
+	Data  []*ListData `json:"data"`
 }
 
 // TenantList 命名空间列表
-// @Tags 命名空间
-// @Summary 命名空间列表
-// @Description 命名空间列表
-// @Accept application/json
-// @Produce application/json
-// @Param page query int false "页码" default(1)
-// @Param page_size query int false "每页数量" default(10)
-// @Success 200 {object} ListResp
-// @Security ApiKeyAuth
-// @router /api/tenant/list [GET]
+//
+//	@Tags			命名空间
+//	@Summary		命名空间列表
+//	@Description	命名空间列表
+//	@Accept			application/json
+//	@Produce		application/json
+//	@Param			page		query		int	false	"页码"	default(1)
+//	@Param			page_size	query		int	false	"每页数量"	default(10)
+//	@Success		200			{object}	ListResp
+//	@Security		ApiKeyAuth
+//	@router			/api/tenant/list [GET]
 func TenantList(c *gin.Context) {
 	req := new(ListReq)
 	if err := c.ShouldBindQuery(req); err != nil {
@@ -57,8 +57,10 @@ func TenantList(c *gin.Context) {
 	tenants, total, err := dal.GetTenantList(int(req.PageSize), int(offset))
 	if err != nil {
 		c.JSON(http.StatusOK, &ListResp{
-			Code: handler.Code_DBErr,
-			Msg:  "获取命名空间列表失败: " + err.Error(),
+			CommonResp: handler.CommonResp{
+				Code: handler.Code_DBErr,
+				Msg:  "获取命名空间列表失败: " + err.Error(),
+			},
 		})
 		return
 	}
@@ -73,8 +75,10 @@ func TenantList(c *gin.Context) {
 		})
 	}
 
-	resp.Code = handler.Code_Success
-	resp.Msg = "获取成功"
+	resp.CommonResp = handler.CommonResp{
+		Code: handler.Code_Success,
+		Msg:  "获取成功",
+	}
 	resp.Total = total
 	resp.Data = tenantList
 

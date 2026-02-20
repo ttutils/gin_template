@@ -109,7 +109,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handler.CommonResp"
+                            "$ref": "#/definitions/tenant.CreateTenantResp"
                         }
                     }
                 }
@@ -146,7 +146,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handler.CommonResp"
+                            "$ref": "#/definitions/tenant.DeleteTenantResp"
                         }
                     }
                 }
@@ -229,7 +229,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handler.CommonResp"
+                            "$ref": "#/definitions/user.CreateUserResp"
                         }
                     }
                 }
@@ -295,7 +295,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handler.CommonResp"
+                            "$ref": "#/definitions/user.ChangePasswordResp"
                         }
                     }
                 }
@@ -332,7 +332,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handler.CommonResp"
+                            "$ref": "#/definitions/user.DeleteUserResp"
                         }
                     }
                 }
@@ -465,6 +465,29 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/user/logout": {
+            "post": {
+                "description": "用户登出，删除JWT token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户"
+                ],
+                "summary": "用户登出",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/user.LogoutResp"
+                        }
+                    }
+                }
+            }
+        },
         "/api/user/update/{user_id}": {
             "post": {
                 "security": [
@@ -505,7 +528,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handler.CommonResp"
+                            "$ref": "#/definitions/user.UpdateUserResp"
                         }
                     }
                 }
@@ -522,7 +545,8 @@ const docTemplate = `{
                 501,
                 502,
                 503,
-                504
+                504,
+                505
             ],
             "x-enum-varnames": [
                 "Code_Success",
@@ -531,19 +555,9 @@ const docTemplate = `{
                 "Code_DBErr",
                 "Code_PasswordErr",
                 "Code_AlreadyExists",
-                "Code_CaptchaErr"
+                "Code_CaptchaErr",
+                "Code_UserErr"
             ]
-        },
-        "handler.CommonResp": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "$ref": "#/definitions/handler.Code"
-                },
-                "msg": {
-                    "type": "string"
-                }
-            }
         },
         "tenant.CreateReq": {
             "type": "object",
@@ -567,6 +581,28 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255,
                     "minLength": 1
+                }
+            }
+        },
+        "tenant.CreateTenantResp": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "$ref": "#/definitions/handler.Code"
+                },
+                "msg": {
+                    "type": "string"
+                }
+            }
+        },
+        "tenant.DeleteTenantResp": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "$ref": "#/definitions/handler.Code"
+                },
+                "msg": {
+                    "type": "string"
                 }
             }
         },
@@ -645,6 +681,17 @@ const docTemplate = `{
                 }
             }
         },
+        "user.ChangePasswordResp": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "$ref": "#/definitions/handler.Code"
+                },
+                "msg": {
+                    "type": "string"
+                }
+            }
+        },
         "user.CreateReq": {
             "type": "object",
             "required": [
@@ -655,6 +702,28 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255,
                     "minLength": 1
+                }
+            }
+        },
+        "user.CreateUserResp": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "$ref": "#/definitions/handler.Code"
+                },
+                "msg": {
+                    "type": "string"
+                }
+            }
+        },
+        "user.DeleteUserResp": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "$ref": "#/definitions/handler.Code"
+                },
+                "msg": {
+                    "type": "string"
                 }
             }
         },
@@ -683,9 +752,6 @@ const docTemplate = `{
                 },
                 "msg": {
                     "type": "string"
-                },
-                "total": {
-                    "type": "integer"
                 }
             }
         },
@@ -779,6 +845,17 @@ const docTemplate = `{
                 }
             }
         },
+        "user.LogoutResp": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "$ref": "#/definitions/handler.Code"
+                },
+                "msg": {
+                    "type": "string"
+                }
+            }
+        },
         "user.UpdateReq": {
             "type": "object",
             "properties": {
@@ -789,6 +866,17 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255,
                     "minLength": 1
+                }
+            }
+        },
+        "user.UpdateUserResp": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "$ref": "#/definitions/handler.Code"
+                },
+                "msg": {
+                    "type": "string"
                 }
             }
         }
