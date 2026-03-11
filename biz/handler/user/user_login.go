@@ -67,7 +67,7 @@ func UserLogin(c *gin.Context) {
 		return
 	}
 
-	if userData.Password != utils.MD5(req.Password) {
+	if !utils.CheckPasswordHash(req.Password, userData.Password) {
 		c.JSON(http.StatusOK, &LoginResp{
 			CommonResp: handler.CommonResp{
 				Code: handler.Code_CaptchaErr,
