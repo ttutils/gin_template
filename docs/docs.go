@@ -677,7 +677,7 @@ const docTemplate = `{
                 "password": {
                     "type": "string",
                     "maxLength": 255,
-                    "minLength": 1
+                    "minLength": 6
                 }
             }
         },
@@ -695,9 +695,15 @@ const docTemplate = `{
         "user.CreateReq": {
             "type": "object",
             "required": [
+                "password",
                 "username"
             ],
             "properties": {
+                "password": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 6
+                },
                 "username": {
                     "type": "string",
                     "maxLength": 255,
@@ -861,6 +867,11 @@ const docTemplate = `{
             "properties": {
                 "enable": {
                     "type": "boolean"
+                },
+                "password": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 6
                 },
                 "username": {
                     "type": "string",
