@@ -4,7 +4,7 @@ import (
 	"gin_template/biz/dal/mysql"
 	"gin_template/biz/dal/postgres"
 	"gin_template/biz/dal/sqlite"
-	"gin_template/bootstrao"
+	"gin_template/bootstrap"
 	"gin_template/utils/config"
 
 	"github.com/gookit/slog"
@@ -28,20 +28,20 @@ func Init() {
 
 	switch dbType {
 	case "mysql":
-		DB = mysql.Init(config.Cfg.Db.User, config.Cfg.Db.Password, config.Cfg.Db.Host, config.Cfg.Db.Port, config.Cfg.Db.Database, config.Cfg.Server.Zone, gormLogger)
-		err := bootstrao.Migrate(DB)
+		DB = mysql.Init(&config.Cfg.Db, config.Cfg.Server.Zone, gormLogger)
+		err := bootstrap.Migrate(DB)
 		if err != nil {
 			return
 		}
 	case "postgres":
-		DB = postgres.Init(config.Cfg.Db.User, config.Cfg.Db.Password, config.Cfg.Db.Host, config.Cfg.Db.Port, config.Cfg.Db.Database, config.Cfg.Server.Zone, gormLogger)
-		err := bootstrao.Migrate(DB)
+		DB = postgres.Init(&config.Cfg.Db, config.Cfg.Server.Zone, gormLogger)
+		err := bootstrap.Migrate(DB)
 		if err != nil {
 			return
 		}
 	case "sqlite3":
 		DB = sqlite.Init(config.Cfg.Db.Database, gormLogger)
-		err := bootstrao.Migrate(DB)
+		err := bootstrap.Migrate(DB)
 		if err != nil {
 			return
 		}
@@ -49,7 +49,7 @@ func Init() {
 
 }
 
-func ChackDb() error {
+func CheckDb() error {
 	sqlDB, err := DB.DB()
 	if err != nil {
 		return err

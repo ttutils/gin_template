@@ -75,6 +75,20 @@ func GetUserList(pageSize int, offset int, username string) ([]*model.User, int6
 	return users, total, nil
 }
 
+// GetAllUser 获取所有用户
+func GetAllUser() ([]*model.User, int64, error) {
+	// 显式初始化空数组
+	var users []*model.User
+
+	query := DB.Model(&model.User{})
+
+	if err := query.Order("id").Find(&users).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return users, int64(len(users)), nil
+}
+
 func UserLogin(username string) (*model.User, error) {
 	var user model.User
 
@@ -84,6 +98,9 @@ func UserLogin(username string) (*model.User, error) {
 			return nil, errors.New("用户不存在")
 		}
 		return nil, err
+	}
+	if !user.Enable {
+		return nil, errors.New("用户已被禁用")
 	}
 	return &user, nil
 }

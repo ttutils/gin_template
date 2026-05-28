@@ -1,4 +1,4 @@
-package bootstrao
+package bootstrap
 
 import (
 	"gin_template/biz/model"
