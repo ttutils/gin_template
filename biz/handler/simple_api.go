@@ -19,16 +19,10 @@ import (
 func Ping(c *gin.Context) {
 	err := dal.CheckDb()
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code": 200,
-			"msg":  "数据库连接失败",
-		})
+		JSON(c, http.StatusOK, Code_DBErr, "数据库连接失败")
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"msg":  "pong",
-	})
+	JSON(c, http.StatusOK, Code_Success, "pong")
 }
 
 // ServerInfo 服务信息
@@ -39,14 +33,11 @@ func Ping(c *gin.Context) {
 // @Produce application/json
 // @Router /api/server_info [get]
 func ServerInfo(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"msg":  "获取成功",
-		"data": gin.H{
+	JSONData(c, http.StatusOK, Code_Success, "获取成功",
+		map[string]any{
 			"name":    config.Cfg.Server.Name,
 			"version": version.Version,
-		},
-	})
+		})
 }
 
 // GetDemo 获取demo状态
@@ -57,11 +48,8 @@ func ServerInfo(c *gin.Context) {
 // @Produce application/json
 // @Router /api/is_demo [get]
 func GetDemo(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"msg":  "获取成功",
-		"data": gin.H{
+	JSONData(c, http.StatusOK, Code_Success, "获取成功",
+		map[string]any{
 			"is_demo": config.Cfg.Server.IsDemo,
-		},
-	})
+		})
 }

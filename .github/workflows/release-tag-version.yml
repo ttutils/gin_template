@@ -22,7 +22,7 @@ jobs:
     permissions:
       packages: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           repository: ${{ github.repository }}
           token: ${{ secrets.RELEASE_TOKEN }}
@@ -33,7 +33,7 @@ jobs:
         env:
           RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
 
-      - uses: actions/setup-go@v6.4.0
+      - uses: actions/setup-go@v6.5.0
         with:
           go-version-file: go.mod
           check-latest: true
@@ -70,7 +70,7 @@ jobs:
     permissions:
       packages: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           repository: ${{ github.repository }}
           token: ${{ secrets.RELEASE_TOKEN }}

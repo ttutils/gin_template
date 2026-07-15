@@ -5,16 +5,18 @@ import (
 	_ "embed"
 	"fmt"
 	"gin_template/biz/dal"
+	"gin_template/biz/handler"
 	"gin_template/biz/mw"
 	genrouter "gin_template/biz/router"
 	"gin_template/utils/captcha"
 	"gin_template/utils/config"
 	"gin_template/utils/cron"
 	"gin_template/utils/logger"
+	"net/http"
 
+	"github.com/buyfakett/qingfeng"
 	"github.com/gin-gonic/gin"
 	"github.com/gookit/slog"
-	"github.com/wdcbot/qingfeng"
 )
 
 //go:embed config/default.yaml
@@ -78,7 +80,9 @@ func main() {
 		slog.Infof("服务启动成功，地址为 http://localhost:%d", config.Cfg.Server.Port)
 	}
 
-	r.NoRoute(func(c *gin.Context) { c.JSON(404, gin.H{"code": 404, "msg": "你访问的页面不存在"}) })
+	r.NoRoute(func(c *gin.Context) {
+		handler.JSON(c, http.StatusNotFound, handler.Code(http.StatusNotFound), "你访问的页面不存在")
+	})
 
 	// 启动服务
 	port := fmt.Sprintf(":%d", config.Cfg.Server.Port)

@@ -2,6 +2,7 @@ package mw
 
 import (
 	"errors"
+	"gin_template/biz/handler"
 	"io"
 	"io/fs"
 	"mime"
@@ -56,7 +57,7 @@ func StaticFileMiddleware(staticFS fs.FS) gin.HandlerFunc {
 
 		// 如果都找不到，返回 404
 		slog.Debugf("[STATIC] 文件 '%s' 和 index.html 均不存在，返回 404", fullPath)
-		c.String(http.StatusNotFound, "404 Not Found")
+		handler.JSON(c, http.StatusNotFound, handler.Code(http.StatusNotFound), "404 Not Found")
 		c.Abort()
 	}
 }

@@ -540,6 +540,7 @@ const docTemplate = `{
             "type": "integer",
             "enum": [
                 200,
+                400,
                 401,
                 500,
                 501,
@@ -550,6 +551,7 @@ const docTemplate = `{
             ],
             "x-enum-varnames": [
                 "Code_Success",
+                "Code_ParamErr",
                 "Code_Unauthorized",
                 "Code_Err",
                 "Code_DBErr",
